@@ -51,6 +51,36 @@ struct symbol *search(char* sym){
 
 
 
+
+struct symbol *searchDevice (char* sym){
+
+ /* puntatore alla cella corrispondente al simbolo cercato della tabella dei simboli dichiarata nell'header serra.h */
+  struct symbol *symptr = &symtab[ symhash(sym) % DIMHASH ];
+  
+  int symcount = DIMHASH;      /* viene passata la dimensione della tabella per cercare in tutte le celle di questa il simbolo cercato */
+
+  while(--symcount >= 0) {
+
+    if(symptr->name && !strcmp(symptr->name, sym)) {         /* se trova il simbolo cercato ritorna il puntatore alla cella contenente il simbolo cercato */
+        return symptr; 
+    }
+
+    if(!symptr->name) {
+       return NULL;
+    }
+
+    if(++symptr >= symtab + DIMHASH) {      /* Ricomincia da capo se la cella corrente è l'ultima */
+        symptr = symtab;                       
+    }
+  }
+
+  yyerror("Errore: Dispositivo cercato non disponibile...\n");
+  abort(); 
+
+}
+
+
+
 struct ast *newast(int nodetype, struct ast *l, struct ast *r)
 {
   struct ast *a = malloc(sizeof(struct ast));
@@ -64,6 +94,25 @@ struct ast *newast(int nodetype, struct ast *l, struct ast *r)
   a->l = l;
   a->r = r;
   return a;
+}
+
+
+
+struct ast *newDevice(struct symbol *s)
+{
+  struct device *a = malloc(sizeof(struct device));
+  
+  if(!a) {
+    yyerror("Spazio di memoria insufficiente");
+    exit(0);
+  }
+  
+  if(!searchDevice){
+    a->nodetype = 'D';
+    a->s = s;
+  }
+  
+  return (struct ast *)a;
 }
 
 
@@ -294,17 +343,17 @@ char* eval(struct ast *a)
       } else
 	v = 0;        /* a default value */
     }
-    break;
-
+  break;
   case 'W':
     v = 0;        /* a default value */
     
     if( ((struct content *)a)->tl) {
       while( eval(((struct content *)a)->cond) != 0)
-	v = eval(((struct content *)a)->tl);
+                 v = eval(((struct content *)a)->tl);
     }
-    break;        /* last value is value */
-	              
+    
+  break;        /* last value is value */
+
   case 'L': eval(a->l); v = eval(a->r); break;
 
   case 'F': v = callbuiltin((struct funcBuiltIn *)a); break;
@@ -312,6 +361,8 @@ char* eval(struct ast *a)
   case 'O': callbuiltinSystem((struct funcBuiltInSystem *)a); break;
 
   case 'U': v = calluser((struct userfunc *)a); break;
+  
+  case 'D':  break;
 
   default: printf("internal error: bad node %c\n", a->nodetype);
   }
@@ -324,6 +375,7 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
 
   enum builtFunc functype = f->functype;
   char *v = strdup(eval(f->l));
+  struct symbol *symDev;
 
  switch(functype) {
    case B_print:
@@ -336,11 +388,20 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
    case B_reconnect:
      printf("Riconnessione in corso con il device %s...\nConnesso\n", v);
      break;
+   case B_status:
+     printf("Richiesta status in corso per il device %s...\n", v);
+     symDev= searchDevice(v);
+     printf("Dispositivo %s: Trovato-> %s\n", v, symDev-> value);     //INSERIRE ENUM CON CODICE DISPOSITIVO COME HTTP 200 AD ESEMPIO
+     //statusDevice(symDev);
+     break;
    case B_insertDevice:
-     printf("Device inserito con successo...\n");
+     if(!searchDevice(v)){
+        search(v);
+        printf("Device inserito con successo...\n");
+     }
      break;
    default:
-     yyerror("Unknown built-in function %d", functype);
+     yyerror("Funzione built-in sconosciuta %d", functype);
      return 0;
  }
 }
@@ -492,10 +553,13 @@ int main()
 /* debugging: dump out an AST */
 int debug = 0;
 
+
+
+
 void dumpast(struct ast *a, int level)
 {
 
-  printf("%*s", 2*level, "");	/* indent to this level */
+  printf("%*s", 2*level, "");
   level++;
 
   if(!a) {
@@ -545,3 +609,5 @@ void dumpast(struct ast *a, int level)
     return;
   }
 }
+
+

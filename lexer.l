@@ -29,18 +29,23 @@
 
  /* Funzioni incorporate */
 "print" { yylval.func = B_print; return FUNC; }
-"connect" { yylval.func = B_connect; return FUNC; }
-"reconnect" { yylval.func = B_reconnect; return FUNC; }
-"status" { yylval.func = B_status; return FUNC; }
-"switchOn" { yylval.func = B_switchOn; return FUNC; }
-"switchOff" { yylval.func = B_switchOff; return FUNC; }
-"diagnostic" { yylval.func = B_diagnostic; return FUNC; }
-"archive" { yylval.func = B_archive; return FUNC; }
-"interval" { yylval.func = B_interval; return FUNC; }
-"insertDevice" { yylval.func = B_insertDevice; return FUNC; }
 
 
+ /* Funzioni di sistema */
 "clear" { yylval.func = B_clear; return SYSTEM; }
+
+
+ /* Funzioni per il tipo device */
+"connect" { yylval.func = B_connect; return FUNCDEV; }
+"reconnect" { yylval.func = B_reconnect; return FUNCDEV; }
+"status" { yylval.func = B_status; return FUNCDEV; }
+"switchOn" { yylval.func = B_switchOn; return FUNCDEV; }
+"switchOff" { yylval.func = B_switchOff; return FUNCDEV; }
+"diagnostic" { yylval.func = B_diagnostic; return FUNCDEV; }
+"archive" { yylval.func = B_archive; return FUNCDEV; }
+"interval" { yylval.func = B_interval; return FUNCDEV; }
+"insertDevice" { yylval.func = B_insertDevice; return FUNCDEV; }
+
 
 "CMD" { printf("User Mode:\t"); }
 

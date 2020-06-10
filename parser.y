@@ -12,7 +12,7 @@
   char * str;
   struct symbol *s;       /* Specifica quale simbolo si sta passando*/
   struct argsList *sl;
-  int  func;                 /* Specifica quale funzione built-in deve essere eseguita */
+  int  func;              /* Specifica quale funzione built-in deve essere eseguita */
 }
 
 /* declare tokens */
@@ -21,6 +21,8 @@
 %token <s> NAME
 %token <func> FUNC
 %token <func> SYSTEM
+%token <func> FUNCDEV
+%token DEVICE
 %token EOL
 
 %token IF THEN ELSE WHILE DO CMD
@@ -78,8 +80,10 @@ exp: exp CMP exp          { $$ = newcmp($2, $1, $3); }
   // | exp '-' exp          { $$ = newast('-', $1,$3);}
    | '(' exp ')'          { $$ = $2; }
    | NUMBER               { $$ = newnum($1); }
-   | FUNC explistStmt     { $$ = newfunc($1, $2); }
+   | FUNC explsstStmt     { $$ = newfunc($1, $2); }
+   | FUNCDEV explsstStmt  { $$ = newfunc($1, $2); }
    | SYSTEM               { $$ = newfuncSystem($1); }
+   | DEVICE STRING "."  exp  { $$ = newDevice($2); }
    | STRING               { $$ = newString($1); }
    | NAME                 { $$ = newref($1); }
    | NAME '=' exp         { $$ = newasgn($1, $3); }

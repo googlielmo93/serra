@@ -18,6 +18,9 @@ struct symbol symtab[DIMHASH];
 /* Dichiarazione Funzione Search() */
 struct symbol *search(char*);
 
+/* Ricerca di un Dispositivo */
+struct symbol *searchDevice (char* sym);
+
 
 struct numval {
   int nodetype;         /* tipo nodo K -> valore costante*/
@@ -29,6 +32,15 @@ struct numval {
 struct stringVal {
   int nodetype;         /* tipo nodo C -> valore stringa costante*/
   struct symbol *s;
+};
+
+
+
+struct device {
+  int nodetype;         /* tipo nodo D -> dispositivo inserito nella rete */
+  bool status;          /* definisce lo stato, acceso true, spento false */
+  char *descrizione;
+  struct symbol *s;     /* il value in symbol è il codice IDENTIFICATIVO ALFANUMERICO */
 };
 
 
@@ -62,6 +74,7 @@ void argsListfree(struct argsList *sl);
  *  F Funzioni Predefinite
  *  O other function di sistema
  *  U Funzioni Utente
+ *  D Dispositivo
  */ 
 
 
@@ -151,6 +164,7 @@ struct ast *newref(struct symbol *s);
 struct ast *newasgn(struct symbol *s, struct ast *v);
 struct ast *newnum(double d);
 struct ast *newString(struct symbol *s);
+struct ast *newDevice(struct symbol *s);
 struct ast *newContent(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
 
 
