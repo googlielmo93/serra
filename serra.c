@@ -106,14 +106,12 @@ struct ast *newDevice(struct symbol *s)
     yyerror("Spazio di memoria insufficiente");
     exit(0);
   }
-  
-  if(!searchDevice){
     a->nodetype = 'D';
     a->s = s;
-  }
-  
+
   return (struct ast *)a;
 }
+
 
 
 struct ast *newnum(double d)
@@ -395,10 +393,7 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
      //statusDevice(symDev);
      break;
    case B_insertDevice:
-     if(!searchDevice(v)){
-        search(v);
         printf("Device inserito con successo...\n");
-     }
      break;
    default:
      yyerror("Funzione built-in sconosciuta %d", functype);

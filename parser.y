@@ -22,7 +22,6 @@
 %token <func> FUNC
 %token <func> SYSTEM
 %token <func> FUNCDEV
-%token DEVICE
 %token EOL
 
 %token IF THEN ELSE WHILE DO CMD
@@ -75,15 +74,22 @@ listStmt: /* nothing */  { $$ = NULL; }
 ;
 
 
-exp: exp CMP exp          { $$ = newcmp($2, $1, $3); }
-  // | exp '+' exp          { $$ = newast('+', $1,$3); }
-  // | exp '-' exp          { $$ = newast('-', $1,$3);}
-   | '(' exp ')'          { $$ = $2; }
-   | NUMBER               { $$ = newnum($1); }
-   | FUNC explsstStmt     { $$ = newfunc($1, $2); }
-   | FUNCDEV explsstStmt  { $$ = newfunc($1, $2); }
+exp: exp CMP exp         { $$ = newcmp($2, $1, $3); }
+  // | exp '+' exp         { $$ = newast('+', $1,$3); }
+  // | exp '-' exp         { $$ = newast('-', $1,$3);}
+   | '(' exp ')'         { $$ = $2; }
+   | NUMBER              { $$ = newnum($1); }
+   | FUNC explistStmt    { $$ = newfunc($1, $2); }
+   | STRING "." FUNCDEV  { 
+                               struct symbol *symDev;
+                               if((symDev = searchDevice($1)) != NULL){               // se esiste il nodo allora esegue la funzione
+                                     if(FUNCDEV != 10){ $$ = newfunc($3, symDev); } else { fprintf(stderr, "Attenzione, dispositivo già esistente."); }     
+                                     // enum 10 in serra.h corrisponde a insertDevice
+                               }else{
+                                     if(FUNCDEV == 10)    $$ = newDevice($1);       // enum 10 in serra.h corrisponde a insertDevice
+                               }
+                          }
    | SYSTEM               { $$ = newfuncSystem($1); }
-   | DEVICE STRING "."  exp  { $$ = newDevice($2); }
    | STRING               { $$ = newString($1); }
    | NAME                 { $$ = newref($1); }
    | NAME '=' exp         { $$ = newasgn($1, $3); }

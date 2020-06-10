@@ -38,8 +38,7 @@ struct stringVal {
 
 struct device {
   int nodetype;         /* tipo nodo D -> dispositivo inserito nella rete */
-  bool status;          /* definisce lo stato, acceso true, spento false */
-  char *descrizione;
+  int status;          /* definisce lo stato, acceso 1, spento 0 */
   struct symbol *s;     /* il value in symbol è il codice IDENTIFICATIVO ALFANUMERICO */
 };
 
