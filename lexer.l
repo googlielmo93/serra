@@ -58,7 +58,7 @@
 [0-9]+"."[0-9] |
 "."?[0-9]? { yylval.d = atof(yytext); return NUMBER; }
 
-"//".*  
+ 
 [ \t]   /*IGNORA SPAZIO E TAB*/ 
 \\\n    printf("continue... > ");    /* IGNORA CONTINUAZIONE DI LINEA A CAPO*/
 "\n"    { return EOL; }

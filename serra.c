@@ -169,6 +169,7 @@ struct ast *newfunc(int functype, struct ast *l)
   a->nodetype = 'F';
   a->l = l;
   a->functype = functype;
+  //printf("%d", functype);       //DEBUG
   return (struct ast *)a;
 }
 
@@ -183,6 +184,7 @@ struct ast *newfuncSystem(int functype)
   }
   a->nodetype = 'O';
   a->functype = functype;
+  //printf("%d", functype);       //DEBUG
   return (struct ast *)a;
 }
 
@@ -284,8 +286,8 @@ void dodef(struct symbol *name, struct argsList *syms, struct ast *func)
 
 
 
-struct ast* callbuiltin(struct funcBuiltIn *);
-void callbuiltinSystem(struct funcBuiltIn *f);
+struct ast * callbuiltin(struct funcBuiltIn *);
+struct ast * callbuiltinSystem(struct funcBuiltInSystem *);
 static char* calluser(struct userfunc *);
 
 
@@ -356,7 +358,7 @@ char* eval(struct ast *a)
 
   case 'F': v = callbuiltin((struct funcBuiltIn *)a); break;
   
-  case 'O': callbuiltinSystem((struct funcBuiltInSystem *)a); break;
+  case 'O': v = callbuiltinSystem((struct funcBuiltInSystem *)a); break;
 
   case 'U': v = calluser((struct userfunc *)a); break;
   
@@ -402,7 +404,7 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
 }
 
 
-void callbuiltinSystem(struct funcBuiltIn *f)
+struct ast * callbuiltinSystem(struct funcBuiltInSystem *f)
 {
   enum builtFuncSystem functype = f->functype;
 

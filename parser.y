@@ -41,7 +41,7 @@
 exec: /* nothing */
     | exec stmt EOL {
                       char *valEval=eval($2);
-                      if(!valEval)
+                      if(valEval != NULL)
                             printf("\t%s\n> ", valEval);
 
                       treefree($2);
@@ -80,13 +80,12 @@ exp: exp CMP exp         { $$ = newcmp($2, $1, $3); }
    | '(' exp ')'         { $$ = $2; }
    | NUMBER              { $$ = newnum($1); }
    | FUNC explistStmt    { $$ = newfunc($1, $2); }
-   | STRING "." FUNCDEV  { 
-                               struct symbol *symDev;
-                               if((symDev = searchDevice($1)) != NULL){               // se esiste il nodo allora esegue la funzione
-                                     if(FUNCDEV != 10){ $$ = newfunc($3, symDev); } else { fprintf(stderr, "Attenzione, dispositivo già esistente."); }     
-                                     // enum 10 in serra.h corrisponde a insertDevice
+   | FUNCDEV explistStmt { 
+                               struct symbol *symDev = strdup(searchDevice($1));
+                               if( symDev != NULL ){               // se esiste il nodo allora esegue la funzione
+                                  $$ = newfunc($1, $2);
                                }else{
-                                     if(FUNCDEV == 10)    $$ = newDevice($1);       // enum 10 in serra.h corrisponde a insertDevice
+                                  printf("Errore Dispositivo inesistente");
                                }
                           }
    | SYSTEM               { $$ = newfuncSystem($1); }
