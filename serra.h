@@ -37,10 +37,17 @@ struct stringVal {
 
 
 struct device {
-  int nodetype;         /* tipo nodo D -> dispositivo inserito nella rete */
+  int nodetype;        /* tipo nodo D -> dispositivo inserito nella rete */
   int status;          /* definisce lo stato, acceso 1, spento 0 */
-  struct symbol *s;     /* il value in symbol è il codice IDENTIFICATIVO ALFANUMERICO */
+  struct symbol *s;    /*PUNTATORE AL SIMBOLO DEL DISPOSITIVO CORRENTE */
+  struct symbolListDevice *l;    /*PUNTATORI AI SIMBOLI DEI DISPOSITIVI CONNESSI A QUELLO CORRENTE */
 };
+
+
+struct symbolListDevice {    /* STRUTTURA PER CREARE UNA LISTA DI DISPOSITIVI A CUI È COLLEGATO UN DEVICE */
+  struct symbol *s;
+  struct symbolListDevice *next;
+}
 
 
 

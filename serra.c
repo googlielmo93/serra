@@ -383,29 +383,48 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
      return (struct ast *) v;
      break;
    case B_connect:
-     printf("Connessione in corso con il device %s...\nConnesso\n", v);
-     return (struct ast *) v;
+     printf("Ricerca del dispositivo %s in corso...\n", v);
+     symDev= searchDevice(v);
+
+     if(!symDev){
+        printf("Dispositivo Esistente\nRichiesta connessione...\n");     //INSERIRE ENUM CON CODICE DISPOSITIVO COME HTTP 200 AD ESEMPIO
+     }else{
+        printf("Dispositivo %s: Non Esistente\n", v);  
+        return NULL;
+     }
+     //statusDevice(symDev);
+     return (struct ast *) symDev;
      break;
    case B_reconnect:
-     printf("Riconnessione in corso con il device %s...\nConnesso\n", v);
-     return (struct ast *) v;
+     printf("Ricerca del dispositivo %s in corso...\n", v);
+     symDev= searchDevice(v);
+
+     if(!symDev){
+        printf("Dispositivo Esistente\nRichiesta Riconnessione...\n");     //INSERIRE ENUM CON CODICE DISPOSITIVO COME HTTP 200 AD ESEMPIO
+     }else{
+        printf("Dispositivo %s: Non Esistente\n", v);  
+        return NULL;
+     }
+     //statusDevice(symDev);
+     return (struct ast *) symDev;
      break;
    case B_status:
      printf("Richiesta status in corso per il device %s...\n", v);
      symDev= searchDevice(v);
 
      if(!symDev){
-        printf("Dispositivo %s: Trovato-> %s\n", v, symDev-> value);     //INSERIRE ENUM CON CODICE DISPOSITIVO COME HTTP 200 AD ESEMPIO
+        printf("Dispositivo %s:  Esistente-> %s\n", v, symDev-> value);     //INSERIRE ENUM CON CODICE DISPOSITIVO COME HTTP 200 AD ESEMPIO
      }else{
-        printf("Dispositivo %s: Non trovato\n", v);  
+        printf("Dispositivo %s:  Non Esistente\n", v);  
         return NULL;
      }
      //statusDevice(symDev);
      return (struct ast *) symDev;
      break;
    case B_insertDevice:
+     //insertDevice(symDev);
      printf("Device inserito con successo...\n");
-     return (struct ast *) v;
+     return NULL;
      break;
    default:
      yyerror("Funzione built-in sconosciuta %d", functype);
