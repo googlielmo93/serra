@@ -565,9 +565,9 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    41,    41,    42,    50,    55,    58,    62,    63,    64,
-      65,    69,    70,    78,    81,    82,    83,    84,    95,    96,
-      97,    98,    99,   103,   104,   108,   109
+       0,    41,    41,    42,    53,    58,    61,    65,    66,    67,
+      68,    72,    73,    81,    84,    85,    86,    87,    98,    99,
+     100,   101,   102,   106,   107,   111,   112
 };
 #endif
 
@@ -1191,97 +1191,100 @@ yyreduce:
 #line 42 "parser.y"
                     {
                       char *valEval=eval((yyvsp[-1].a));
-                      if(valEval != NULL)
+                      if(valEval != NULL){
                             printf("%s\n> ", valEval);
+                      }else{
+                            printf("\n> ");
+                      }
 
                       treefree((yyvsp[-1].a));
                     }
-#line 1200 "parser.tab.c"
+#line 1203 "parser.tab.c"
     break;
 
   case 4:
-#line 50 "parser.y"
+#line 53 "parser.y"
                                                       { 
                                                             dodef((yyvsp[-6].s), (yyvsp[-4].sl), (yyvsp[-1].a));
                                                             printf("Defined %s\n> ", (yyvsp[-6].s)->name); 
                                                         }
-#line 1209 "parser.tab.c"
+#line 1212 "parser.tab.c"
     break;
 
   case 5:
-#line 55 "parser.y"
+#line 58 "parser.y"
                      { 
                         yyerrok; printf("> "); 
                      }
-#line 1217 "parser.tab.c"
+#line 1220 "parser.tab.c"
     break;
 
   case 6:
-#line 58 "parser.y"
+#line 61 "parser.y"
                      {  yyerrok; }
-#line 1223 "parser.tab.c"
+#line 1226 "parser.tab.c"
     break;
 
   case 7:
-#line 62 "parser.y"
+#line 65 "parser.y"
                                       { (yyval.a) = newContent('I', (yyvsp[-2].a), (yyvsp[0].a), NULL); }
-#line 1229 "parser.tab.c"
+#line 1232 "parser.tab.c"
     break;
 
   case 8:
-#line 63 "parser.y"
+#line 66 "parser.y"
                                           { (yyval.a) = newContent('I', (yyvsp[-4].a), (yyvsp[-2].a), (yyvsp[0].a)); }
-#line 1235 "parser.tab.c"
+#line 1238 "parser.tab.c"
     break;
 
   case 9:
-#line 64 "parser.y"
+#line 67 "parser.y"
                                       { (yyval.a) = newContent('W', (yyvsp[-2].a), (yyvsp[0].a), NULL); }
-#line 1241 "parser.tab.c"
+#line 1244 "parser.tab.c"
     break;
 
   case 11:
-#line 69 "parser.y"
+#line 72 "parser.y"
                          { (yyval.a) = NULL; }
-#line 1247 "parser.tab.c"
+#line 1250 "parser.tab.c"
     break;
 
   case 12:
-#line 70 "parser.y"
+#line 73 "parser.y"
                              {  if ((yyvsp[0].a) == NULL)
                                     (yyval.a) = (yyvsp[-2].a);
                                 else
                                     (yyval.a) = newast('L', (yyvsp[-2].a), (yyvsp[0].a));
                              }
-#line 1257 "parser.tab.c"
+#line 1260 "parser.tab.c"
     break;
 
   case 13:
-#line 78 "parser.y"
+#line 81 "parser.y"
                          { (yyval.a) = newcmp((yyvsp[-1].func), (yyvsp[-2].a), (yyvsp[0].a)); }
-#line 1263 "parser.tab.c"
+#line 1266 "parser.tab.c"
     break;
 
   case 14:
-#line 81 "parser.y"
+#line 84 "parser.y"
                          { (yyval.a) = (yyvsp[-1].a); }
-#line 1269 "parser.tab.c"
+#line 1272 "parser.tab.c"
     break;
 
   case 15:
-#line 82 "parser.y"
+#line 85 "parser.y"
                          { (yyval.a) = newnum((yyvsp[0].d)); }
-#line 1275 "parser.tab.c"
+#line 1278 "parser.tab.c"
     break;
 
   case 16:
-#line 83 "parser.y"
+#line 86 "parser.y"
                          { (yyval.a) = newfunc((yyvsp[-1].func), (yyvsp[0].a)); }
-#line 1281 "parser.tab.c"
+#line 1284 "parser.tab.c"
     break;
 
   case 17:
-#line 84 "parser.y"
+#line 87 "parser.y"
                          { 
                            (yyval.a) = newfunc((yyvsp[-1].func), (yyvsp[0].a)); 
                            /*
@@ -1293,59 +1296,59 @@ yyreduce:
                                }
                            */
                           }
-#line 1297 "parser.tab.c"
+#line 1300 "parser.tab.c"
     break;
 
   case 18:
-#line 95 "parser.y"
+#line 98 "parser.y"
                           { (yyval.a) = newfuncSystem((yyvsp[0].func)); }
-#line 1303 "parser.tab.c"
+#line 1306 "parser.tab.c"
     break;
 
   case 19:
-#line 96 "parser.y"
+#line 99 "parser.y"
                           { (yyval.a) = newString((yyvsp[0].str)); }
-#line 1309 "parser.tab.c"
+#line 1312 "parser.tab.c"
     break;
 
   case 20:
-#line 97 "parser.y"
+#line 100 "parser.y"
                           { (yyval.a) = newref((yyvsp[0].s)); }
-#line 1315 "parser.tab.c"
+#line 1318 "parser.tab.c"
     break;
 
   case 21:
-#line 98 "parser.y"
+#line 101 "parser.y"
                           { (yyval.a) = newasgn((yyvsp[-2].s), (yyvsp[0].a)); }
-#line 1321 "parser.tab.c"
+#line 1324 "parser.tab.c"
     break;
 
   case 22:
-#line 99 "parser.y"
+#line 102 "parser.y"
                               { (yyval.a) = newcall((yyvsp[-3].s), (yyvsp[-1].a)); }
-#line 1327 "parser.tab.c"
+#line 1330 "parser.tab.c"
     break;
 
   case 24:
-#line 104 "parser.y"
+#line 107 "parser.y"
                                   { (yyval.a) = newast('L', (yyvsp[-2].a), (yyvsp[0].a)); }
-#line 1333 "parser.tab.c"
+#line 1336 "parser.tab.c"
     break;
 
   case 25:
-#line 108 "parser.y"
+#line 111 "parser.y"
                      { (yyval.sl) = newargsList((yyvsp[0].s), NULL); }
-#line 1339 "parser.tab.c"
+#line 1342 "parser.tab.c"
     break;
 
   case 26:
-#line 109 "parser.y"
+#line 112 "parser.y"
                             { (yyval.sl) = newargsList((yyvsp[-2].s), (yyvsp[0].sl)); }
-#line 1345 "parser.tab.c"
+#line 1348 "parser.tab.c"
     break;
 
 
-#line 1349 "parser.tab.c"
+#line 1352 "parser.tab.c"
 
       default: break;
     }
@@ -1539,5 +1542,5 @@ yyreturn:
   return yyresult;
 }
 
-#line 113 "parser.y"
+#line 116 "parser.y"
 

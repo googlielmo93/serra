@@ -41,8 +41,11 @@
 exec: /* nothing */
     | exec stmt EOL {
                       char *valEval=eval($2);
-                      if(valEval != NULL)
+                      if(valEval != NULL){
                             printf("%s\n> ", valEval);
+                      }else{
+                            printf("\n> ");
+                      }
 
                       treefree($2);
                     }

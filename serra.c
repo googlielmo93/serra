@@ -393,7 +393,13 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
    case B_status:
      printf("Richiesta status in corso per il device %s...\n", v);
      symDev= searchDevice(v);
-     printf("Dispositivo %s: Trovato-> %s\n", v, symDev-> value);     //INSERIRE ENUM CON CODICE DISPOSITIVO COME HTTP 200 AD ESEMPIO
+
+     if(!symDev){
+        printf("Dispositivo %s: Trovato-> %s\n", v, symDev-> value);     //INSERIRE ENUM CON CODICE DISPOSITIVO COME HTTP 200 AD ESEMPIO
+     }else{
+        printf("Dispositivo %s: Non trovato\n", v);  
+        return NULL;
+     }
      //statusDevice(symDev);
      return (struct ast *) symDev;
      break;
