@@ -42,7 +42,7 @@ exec: /* nothing */
     | exec stmt EOL {
                       char *valEval=eval($2);
                       if(valEval != NULL)
-                            printf("\t%s\n> ", valEval);
+                            printf("%s\n> ", valEval);
 
                       treefree($2);
                     }
@@ -55,6 +55,7 @@ exec: /* nothing */
     | exec error EOL { 
                         yyerrok; printf("> "); 
                      }
+    | NAME           {  yyerrok; }
 ;
 
  

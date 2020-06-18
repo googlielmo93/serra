@@ -379,7 +379,7 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
 
  switch(functype) {
    case B_print:
-     printf("display = %s\n", v);
+     printf("display = ");
      return (struct ast *) v;
      break;
    case B_connect:
@@ -415,6 +415,7 @@ struct ast * callbuiltinSystem(struct funcBuiltInSystem *f)
  switch(functype) {
    case B_clear:
      system("clear");
+     return 0;
      break;
    default:
      yyerror("Unknown built-in function %d", functype);
@@ -510,14 +511,14 @@ void treefree(struct ast *a)
   case 'L':
     treefree(a->r);
     /* no subtree */
-  case 'K': case 'N': case 'C':
+  case 'K': case 'N': case 'C':case 'F':case 'O':case 'U':
     break;
 
   case '=':
     free( ((struct symasgn *)a)->v);
     break;
 
-  case 'I': case 'W':
+  case 'I': case 'W': 
     free( ((struct content *)a)->cond);
     if( ((struct content *)a)->tl) free( ((struct content *)a)->tl);
     if( ((struct content *)a)->el) free( ((struct content *)a)->el);
