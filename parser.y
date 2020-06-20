@@ -22,6 +22,8 @@
 %token <func> FUNC
 %token <func> SYSTEM
 %token <func> FUNCDEV
+%token <func> INSERT
+%token <str> ARROW
 %token EOL
 
 %token IF THEN ELSE WHILE DO CMD
@@ -94,6 +96,12 @@ exp: exp CMP exp         { $$ = newcmp($2, $1, $3); }
                                   printf("Errore Dispositivo inesistente");
                                }
                            */
+                          }
+   | INSERT exp ARROW explistStmt   { 
+                                        $$ = newDev($2, $4); 
+                          }
+   | INSERT exp                     { 
+                                        $$ = newDev($2, NULL); 
                           }
    | SYSTEM               { $$ = newfuncSystem($1); }
    | STRING               { $$ = newString($1); }

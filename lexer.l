@@ -44,7 +44,14 @@
 "diagnostic" { yylval.func = B_diagnostic; return FUNCDEV; }
 "archive" { yylval.func = B_archive; return FUNCDEV; }
 "interval" { yylval.func = B_interval; return FUNCDEV; }
-"insertDevice" { yylval.func = B_insertDevice; return FUNCDEV; }
+
+
+
+"insertDevice" { yylval.func = B_insertDevice; return INSERT; }
+
+
+ /* ARROW */
+"->" { return ARROW;}
 
 
 "CMD" { printf("User Mode:\t"); }

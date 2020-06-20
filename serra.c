@@ -98,22 +98,6 @@ struct ast *newast(int nodetype, struct ast *l, struct ast *r)
 
 
 
-struct ast *newDevice(struct symbol *s)
-{
-  struct device *a = malloc(sizeof(struct device));
-  
-  if(!a) {
-    yyerror("Spazio di memoria insufficiente");
-    exit(0);
-  }
-    a->nodetype = 'D';
-    a->s = s;
-
-  return (struct ast *)a;
-}
-
-
-
 struct ast *newnum(double d)
 {
   struct numval *a = malloc(sizeof(struct numval));
@@ -187,6 +171,23 @@ struct ast *newfuncSystem(int functype)
   //printf("%d", functype);       //DEBUG
   return (struct ast *)a;
 }
+
+
+
+struct ast *newDev(struct symbol *s, struct ast *l)
+{
+  struct device *a = malloc(sizeof(struct device));
+  
+  if(!a) {
+    yyerror("Spazio di memoria insufficiente");
+    exit(0);
+  }
+  a->nodetype = 'D';
+  a->status = 1;  //LO PONGO CON STATO ATTIVO
+  a->l = l;
+  return (struct ast *)a;
+}
+
 
 
 struct ast *newcall(struct symbol *s, struct ast *l)
@@ -362,12 +363,28 @@ char* eval(struct ast *a)
 
   case 'U': v = calluser((struct userfunc *)a); break;
   
-  case 'D':  break;
+  case 'D': v = callInsert((struct device *)a); break;
+  
+  
+  DEVO GESTIRMELO COME NEI CASI SOPRA SCENDENDO L'ALBERO AST CON LA RICORSIONE DI EVAL
 
   default: printf("internal error: bad node %c\n", a->nodetype);
   }
   return v;
 }
+
+
+
+
+struct ast * callInsert(struct device *d)
+{ 
+     printf("Device inserito con successo\n");
+     return NULL;
+
+     yyerror("Errore durante l'inserimento");
+     return 0;
+}
+
 
 
 struct ast * callbuiltin(struct funcBuiltIn *f)
@@ -422,8 +439,14 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
      return (struct ast *) symDev;
      break;
    case B_insertDevice:
-     //insertDevice(symDev);
-     printf("Device inserito con successo...\n");
+     printf("Verifica Esistenza dispositivo %s in corso...\n", v);
+     symDev= searchDevice(v);
+     if(!symDev){
+        printf("Dispositivo già esistente, NUOVO inserimento non riuscito\n");    
+        return NULL;
+     }
+     insertDevice(symDev);
+     printf("Device inserito con successo\n");
      return NULL;
      break;
    default:

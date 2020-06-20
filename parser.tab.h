@@ -60,14 +60,16 @@ extern int yydebug;
     FUNC = 261,                    /* FUNC  */
     SYSTEM = 262,                  /* SYSTEM  */
     FUNCDEV = 263,                 /* FUNCDEV  */
-    EOL = 264,                     /* EOL  */
-    IF = 265,                      /* IF  */
-    THEN = 266,                    /* THEN  */
-    ELSE = 267,                    /* ELSE  */
-    WHILE = 268,                   /* WHILE  */
-    DO = 269,                      /* DO  */
-    CMD = 270,                     /* CMD  */
-    CMP = 271                      /* CMP  */
+    INSERT = 264,                  /* INSERT  */
+    ARROW = 265,                   /* ARROW  */
+    EOL = 266,                     /* EOL  */
+    IF = 267,                      /* IF  */
+    THEN = 268,                    /* THEN  */
+    ELSE = 269,                    /* ELSE  */
+    WHILE = 270,                   /* WHILE  */
+    DO = 271,                      /* DO  */
+    CMD = 272,                     /* CMD  */
+    CMP = 273                      /* CMP  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -85,7 +87,7 @@ union YYSTYPE
   struct argsList *sl;
   int  func;              /* Specifica quale funzione built-in deve essere eseguita */
 
-#line 89 "parser.tab.h"
+#line 91 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
