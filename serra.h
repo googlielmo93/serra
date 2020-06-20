@@ -40,6 +40,7 @@ struct device {
   int nodetype;         /* tipo nodo D -> dispositivo inserito nella rete */
   int status;          /* definisce lo stato, acceso 1, spento 0 */
   struct symbol *s;     /* il value in symbol è il codice IDENTIFICATIVO ALFANUMERICO */
+  struct ast *l;        /* Lista degli argomenti della funzione utente */
 };
 
 

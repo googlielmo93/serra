@@ -287,10 +287,10 @@ void dodef(struct symbol *name, struct argsList *syms, struct ast *func)
 
 
 
+struct ast * callInsert(struct device *);
 struct ast * callbuiltin(struct funcBuiltIn *);
 struct ast * callbuiltinSystem(struct funcBuiltInSystem *);
 static char* calluser(struct userfunc *);
-
 
 
 char* eval(struct ast *a)
@@ -366,7 +366,7 @@ char* eval(struct ast *a)
   case 'D': v = callInsert((struct device *)a); break;
   
   
-  DEVO GESTIRMELO COME NEI CASI SOPRA SCENDENDO L'ALBERO AST CON LA RICORSIONE DI EVAL
+ // DEVO GESTIRMELO COME NEI CASI SOPRA SCENDENDO L'ALBERO AST CON LA RICORSIONE DI EVAL
 
   default: printf("internal error: bad node %c\n", a->nodetype);
   }
@@ -381,8 +381,8 @@ struct ast * callInsert(struct device *d)
      printf("Device inserito con successo\n");
      return NULL;
 
-     yyerror("Errore durante l'inserimento");
-     return 0;
+    /* yyerror("Errore durante l'inserimento");
+     return 0;*/
 }
 
 
@@ -438,14 +438,14 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
      //statusDevice(symDev);
      return (struct ast *) symDev;
      break;
-   case B_insertDevice:
+   case B_callInsert:
      printf("Verifica Esistenza dispositivo %s in corso...\n", v);
      symDev= searchDevice(v);
      if(!symDev){
         printf("Dispositivo già esistente, NUOVO inserimento non riuscito\n");    
         return NULL;
      }
-     insertDevice(symDev);
+     callInsert(symDev);
      printf("Device inserito con successo\n");
      return NULL;
      break;
