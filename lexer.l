@@ -47,7 +47,7 @@
 
 
 
-"callInsert" { yylval.func = B_callInsert; return INSERT; }
+"insertDevice" { yylval.func = B_insertDevice; return INSERT; }
 
 
  /* ARROW */

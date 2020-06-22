@@ -1212,9 +1212,9 @@ yyreduce:
 
   case 4:
 #line 55 "parser.y"
-                                                      { 
+                                                       {
                                                             dodef((yyvsp[-6].s), (yyvsp[-4].sl), (yyvsp[-1].a));
-                                                            printf("Defined %s\n> ", (yyvsp[-6].s)->name); 
+                                                            printf("Definito %s\n> ", (yyvsp[-6].s)->name); 
                                                         }
 #line 1220 "parser.tab.c"
     break;

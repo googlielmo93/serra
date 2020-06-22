@@ -335,14 +335,14 @@ char* eval(struct ast *a)
   case 'I': 
     if( eval( ((struct content *)a)->cond) != 0) {
       if( ((struct content *)a)->tl) {
-	v = eval( ((struct content *)a)->tl);
+    v = eval( ((struct content *)a)->tl);
       } else
-	v = 0;        /* a default value */
+    v = 0;        /* a default value */
     } else {
       if( ((struct content *)a)->el) {
         v = eval(((struct content *)a)->el);
       } else
-	v = 0;        /* a default value */
+    v = 0;        /* a default value */
     }
   break;
   case 'W':
@@ -438,7 +438,7 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
      //statusDevice(symDev);
      return (struct ast *) symDev;
      break;
-   case B_callInsert:
+   case B_insertDevice:
      printf("Verifica Esistenza dispositivo %s in corso...\n", v);
      symDev= searchDevice(v);
      if(!symDev){

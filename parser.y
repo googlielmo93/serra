@@ -52,9 +52,9 @@ exec: /* nothing */
                       treefree($2);
                     }
                          
-    | exec CMD NAME '(' argsList ')' '=' listStmt EOL { 
+    | exec CMD NAME '(' argsList ')' '=' listStmt EOL  {
                                                             dodef($3, $5, $8);
-                                                            printf("Defined %s\n> ", $3->name); 
+                                                            printf("Definito %s\n> ", $3->name); 
                                                         }
 
     | exec error EOL { 
