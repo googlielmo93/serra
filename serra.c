@@ -57,14 +57,11 @@ struct symbol *searchDevice (char* sym){
  
  /* puntatore alla cella corrispondente al simbolo cercato della tabella dei simboli dichiarata nell'header serra.h */
   struct symbol *symptr = &symtab[ symhash(sym) % DIMHASH ];
-  printf("%s\n", symptr);
-  
+
   int symcount = DIMHASH;      /* viene passata la dimensione della tabella per cercare in tutte le celle di questa il simbolo cercato */
-  printf("%d\n\n", symcount);
   
   while(--symcount >= 0) {
-	  printf("%d\n", symcount);
-	  
+
     if(symptr->name && !strcmp(symptr->name, sym)) {         /* se trova il simbolo cercato ritorna il puntatore alla cella contenente il simbolo cercato */
         return symptr; 
     }
@@ -189,14 +186,16 @@ struct ast *newDev(struct ast *ps, struct ast *l)
   
   char *nameSymbol;
   nameSymbol= (((struct stringVal *)ps)->s->name);
+  nameSymbol= strdup(strcat(nameSymbol, "#"));
   
   char devhash[DIMHASH];
   sprintf(devhash, "%d", symhash(nameSymbol) % DIMHASH);
   nameSymbol= strdup(strcat(nameSymbol, devhash));  
   /* in questa maniera il nome del device è il simbolo che sarebbe già presente nella tabella per causa della stringa,
    * pertanto lo concateniamo a un codice hash */
-  /*
+  
   struct symbol *sym= searchDevice(nameSymbol);
+  
   if(!sym)
   {
     struct symbol *symbolDev= search(nameSymbol);
@@ -205,13 +204,14 @@ struct ast *newDev(struct ast *ps, struct ast *l)
        a->status = 1;  //LO PONGO CON STATO ATTIVO
        a->s= symbolDev;
        a->l = l;
+	   printf("SONO QUI");
        return (struct ast *)a;
     }
   }else{
     printf("Dispositivo già Esistente:");
     return ps;
   }
-  */
+  
   return NULL;
   
 }
