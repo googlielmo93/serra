@@ -19,7 +19,7 @@ static unsigned symhash(char *sym) {
 
 
 struct symbol *search(char* sym){
-
+ 
  /* puntatore alla cella corrispondente al simbolo cercato della tabella dei simboli dichiarata nell'header serra.h */
   struct symbol *symptr = &symtab[ symhash(sym) % DIMHASH ];
   
@@ -54,13 +54,17 @@ struct symbol *search(char* sym){
 
 struct symbol *searchDevice (char* sym){
 
+ 
  /* puntatore alla cella corrispondente al simbolo cercato della tabella dei simboli dichiarata nell'header serra.h */
   struct symbol *symptr = &symtab[ symhash(sym) % DIMHASH ];
+  printf("%s\n", symptr);
   
   int symcount = DIMHASH;      /* viene passata la dimensione della tabella per cercare in tutte le celle di questa il simbolo cercato */
-
+  printf("%d\n\n", symcount);
+  
   while(--symcount >= 0) {
-
+	  printf("%d\n", symcount);
+	  
     if(symptr->name && !strcmp(symptr->name, sym)) {         /* se trova il simbolo cercato ritorna il puntatore alla cella contenente il simbolo cercato */
         return symptr; 
     }
@@ -174,7 +178,7 @@ struct ast *newfuncSystem(int functype)
 
 
 
-struct ast *newDev(struct symbol *s, struct ast *l)
+struct ast *newDev(struct ast *ps, struct ast *l)
 {
   struct device *a = malloc(sizeof(struct device));
   
@@ -182,10 +186,34 @@ struct ast *newDev(struct symbol *s, struct ast *l)
     yyerror("Spazio di memoria insufficiente");
     exit(0);
   }
-  a->nodetype = 'D';
-  a->status = 1;  //LO PONGO CON STATO ATTIVO
-  a->l = l;
-  return (struct ast *)a;
+  
+  char *nameSymbol;
+  nameSymbol= (((struct stringVal *)ps)->s->name);
+  
+  char devhash[DIMHASH];
+  sprintf(devhash, "%d", symhash(nameSymbol) % DIMHASH);
+  nameSymbol= strdup(strcat(nameSymbol, devhash));  
+  /* in questa maniera il nome del device è il simbolo che sarebbe già presente nella tabella per causa della stringa,
+   * pertanto lo concateniamo a un codice hash */
+  /*
+  struct symbol *sym= searchDevice(nameSymbol);
+  if(!sym)
+  {
+    struct symbol *symbolDev= search(nameSymbol);
+    if(!symbolDev){
+       a->nodetype = 'D';
+       a->status = 1;  //LO PONGO CON STATO ATTIVO
+       a->s= symbolDev;
+       a->l = l;
+       return (struct ast *)a;
+    }
+  }else{
+    printf("Dispositivo già Esistente:");
+    return ps;
+  }
+  */
+  return NULL;
+  
 }
 
 
@@ -508,10 +536,10 @@ static char * calluser(struct userfunc *f)
     }
 
     if(args->nodetype == 'L') {        /* if this is a list node */
-      sprintf(newval[i], "%d", eval(args->l) );
+      sprintf(newval[i], "%s", eval(args->l) );
       args = args->r;
     } else {                           /* if it's the end of the list */
-      sprintf(newval[i], "%d", eval(args) );
+      sprintf(newval[i], "%s", eval(args) );
       args = NULL;
     }
   }
@@ -521,8 +549,8 @@ static char * calluser(struct userfunc *f)
   for(i = 0; i < nargs; i++) {
     struct symbol *s = sl->sym;
 
-    sprintf(oldval[i], "%d", s->value );
-    sprintf(newval[i], "%d", s->value );
+    sprintf(oldval[i], "%s", s->value );
+    sprintf(newval[i], "%s", s->value );
 
     sl = sl->next;
   }
@@ -588,6 +616,7 @@ void yyerror(char *s, ...)
   fprintf(stderr, "%d: error: ", yylineno);
   vfprintf(stderr, s, ap);
   fprintf(stderr, "\n");
+  va_end(ap);
 }
 
 

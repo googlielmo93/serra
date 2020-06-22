@@ -58,7 +58,14 @@
 
 
  /* Stringhe alfanumeriche */
-["][a-zA-Z][a-zA-Z0-9]*["]  { yylval.s = search(yytext); return STRING; }
+["][a-zA-Z][a-zA-Z0-9]*["]  {    
+                                int dimString= strlen(yytext);
+                                char subbuff[dimString-1];
+                                memcpy( subbuff, &yytext[1], dimString-2 );
+                                subbuff[dimString] = '\0';
+                                yylval.s = search(subbuff); 
+                                return STRING; 
+}
 [a-zA-Z][a-zA-Z0-9]*  { yylval.s = search(yytext); return NAME; }            /* SERVE PER DEFINIRE I SIMBOLI PER I NOMI DELLE FUNZIONI */
 
  /* Numeri in virgola mobile */

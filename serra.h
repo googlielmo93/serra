@@ -164,7 +164,7 @@ struct ast *newref(struct symbol *s);
 struct ast *newasgn(struct symbol *s, struct ast *v);
 struct ast *newnum(double d);
 struct ast *newString(struct symbol *s);
-struct ast *newDev(struct symbol *s, struct ast *l);
+struct ast *newDev(struct ast *ps, struct ast *l);
 struct ast *newContent(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
 
 
