@@ -75,8 +75,7 @@ struct symbol *searchDevice (char* sym){
     }
   }
 
-  yyerror("Errore: Dispositivo cercato non disponibile...\n");
-  abort(); 
+  return NULL;
 
 }
 
@@ -189,29 +188,32 @@ struct ast *newDev(struct ast *ps, struct ast *l)
   nameSymbol= strdup(strcat(nameSymbol, "#"));
   
   char devhash[DIMHASH];
-  sprintf(devhash, "%d", symhash(nameSymbol) % DIMHASH);
+  sprintf(devhash, "%u", symhash(nameSymbol) % DIMHASH);
   nameSymbol= strdup(strcat(nameSymbol, devhash));  
   /* in questa maniera il nome del device è il simbolo che sarebbe già presente nella tabella per causa della stringa,
    * pertanto lo concateniamo a un codice hash */
   
   struct symbol *sym= searchDevice(nameSymbol);
+  struct symbol *symbolDev= search(nameSymbol);
   
-  if(!sym)
+  if(sym==NULL)    // SE IL DEVICE NON ESISTE LO CREIAMO INVOCANDO SEARCH
   {
-    struct symbol *symbolDev= search(nameSymbol);
-    if(!symbolDev){
+
+    if(symbolDev==NULL){
        a->nodetype = 'D';
        a->status = 1;  //LO PONGO CON STATO ATTIVO
        a->s= symbolDev;
        a->l = l;
-	   printf("SONO QUI");
        return (struct ast *)a;
     }
+    
   }else{
     printf("Dispositivo già Esistente:");
+    free(a);
     return ps;
   }
   
+  free(a);
   return NULL;
   
 }
@@ -458,7 +460,7 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
      symDev= searchDevice(v);
 
      if(!symDev){
-        printf("Dispositivo %s:  Esistente-> %s\n", v, symDev-> value);     //INSERIRE ENUM CON CODICE DISPOSITIVO COME HTTP 200 AD ESEMPIO
+        printf("Dispositivo %s:  Esistente-> %s\n", v, symDev-> name);
      }else{
         printf("Dispositivo %s:  Non Esistente\n", v);  
         return NULL;
