@@ -1317,7 +1317,7 @@ yyreduce:
 
   case 19:
 #line 103 "parser.y"
-                                    { 
+                          { 
                                         (yyval.a) = newDev((yyvsp[0].a), NULL); 
                           }
 #line 1324 "parser.tab.c"

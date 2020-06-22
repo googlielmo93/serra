@@ -100,7 +100,7 @@ exp: exp CMP exp         { $$ = newcmp($2, $1, $3); }
    | INSERT exp ARROW explistStmt   { 
                                         $$ = newDev($2, $4); 
                           }
-   | INSERT exp                     { 
+   | INSERT exp           { 
                                         $$ = newDev($2, NULL); 
                           }
    | SYSTEM               { $$ = newfuncSystem($1); }
