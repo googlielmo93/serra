@@ -570,8 +570,8 @@ static const yytype_int8 yytranslate[] =
 static const yytype_int8 yyrline[] =
 {
        0,    43,    43,    44,    55,    60,    63,    67,    68,    69,
-      70,    74,    75,    83,    86,    87,    88,    89,   100,   103,
-     106,   107,   108,   109,   110,   114,   115,   119,   120
+      70,    74,    75,    83,    86,    87,    88,    89,    93,    96,
+      99,   100,   101,   102,   103,   107,   108,   112,   113
 };
 #endif
 
@@ -1295,84 +1295,77 @@ yyreduce:
 #line 89 "parser.y"
                          { 
                            (yyval.a) = newfunc((yyvsp[-1].func), (yyvsp[0].a)); 
-                           /*
-                               struct symbol *symDev = strdup(searchDevice($1));
-                               if( symDev != NULL ){               // se esiste il nodo allora esegue la funzione
-                                  $$ = newfunc($1, $2);
-                               }else{
-                                  printf("Errore Dispositivo inesistente");
-                               }
-                           */
+                          
                           }
-#line 1308 "parser.tab.c"
+#line 1301 "parser.tab.c"
     break;
 
   case 18:
-#line 100 "parser.y"
+#line 93 "parser.y"
                                     { 
                                         (yyval.a) = newDev((yyvsp[-2].a), (yyvsp[0].a)); 
                           }
-#line 1316 "parser.tab.c"
+#line 1309 "parser.tab.c"
     break;
 
   case 19:
-#line 103 "parser.y"
+#line 96 "parser.y"
                           { 
                                         (yyval.a) = newDev((yyvsp[0].a), NULL); 
                           }
-#line 1324 "parser.tab.c"
+#line 1317 "parser.tab.c"
     break;
 
   case 20:
-#line 106 "parser.y"
+#line 99 "parser.y"
                           { (yyval.a) = newfuncSystem((yyvsp[0].func)); }
-#line 1330 "parser.tab.c"
+#line 1323 "parser.tab.c"
     break;
 
   case 21:
-#line 107 "parser.y"
+#line 100 "parser.y"
                           { (yyval.a) = newString((yyvsp[0].str)); }
-#line 1336 "parser.tab.c"
+#line 1329 "parser.tab.c"
     break;
 
   case 22:
-#line 108 "parser.y"
+#line 101 "parser.y"
                           { (yyval.a) = newref((yyvsp[0].s)); }
-#line 1342 "parser.tab.c"
+#line 1335 "parser.tab.c"
     break;
 
   case 23:
-#line 109 "parser.y"
+#line 102 "parser.y"
                           { (yyval.a) = newasgn((yyvsp[-2].s), (yyvsp[0].a)); }
-#line 1348 "parser.tab.c"
+#line 1341 "parser.tab.c"
     break;
 
   case 24:
-#line 110 "parser.y"
+#line 103 "parser.y"
                               { (yyval.a) = newcall((yyvsp[-3].s), (yyvsp[-1].a)); }
-#line 1354 "parser.tab.c"
+#line 1347 "parser.tab.c"
     break;
 
   case 26:
-#line 115 "parser.y"
+#line 108 "parser.y"
                                   { (yyval.a) = newast('L', (yyvsp[-2].a), (yyvsp[0].a)); }
-#line 1360 "parser.tab.c"
+#line 1353 "parser.tab.c"
     break;
 
   case 27:
-#line 119 "parser.y"
+#line 112 "parser.y"
                      { (yyval.sl) = newargsList((yyvsp[0].s), NULL); }
-#line 1366 "parser.tab.c"
+#line 1359 "parser.tab.c"
     break;
 
   case 28:
-#line 120 "parser.y"
+#line 113 "parser.y"
                             { (yyval.sl) = newargsList((yyvsp[-2].s), (yyvsp[0].sl)); }
-#line 1372 "parser.tab.c"
+#line 1365 "parser.tab.c"
     break;
 
 
-#line 1376 "parser.tab.c"
+#line 1369 "parser.tab.c"
 
       default: break;
     }
@@ -1566,5 +1559,5 @@ yyreturn:
   return yyresult;
 }
 
-#line 124 "parser.y"
+#line 117 "parser.y"
 

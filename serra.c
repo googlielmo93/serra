@@ -18,6 +18,18 @@ static unsigned symhash(char *sym) {
 }
 
 
+unsigned char * symhashDev(char * nameSymbol){
+
+  char devhash[DIMHASH];
+  sprintf(devhash, "#%u", symhash(nameSymbol) % DIMHASH);
+
+  nameSymbol= strdup(strcat(nameSymbol, devhash));  
+  /* in questa maniera il nome del device è il simbolo che sarebbe già presente nella tabella per causa della stringa,
+   * pertanto lo concateniamo a un codice hash */
+}
+
+
+
 struct symbol *search(char* sym){
  /* puntatore alla cella corrispondente al simbolo cercato della tabella dei simboli dichiarata nell'header serra.h */
   struct symbol *symptr = &symtab[ symhash(sym) % DIMHASH ];
@@ -52,7 +64,6 @@ struct symbol *search(char* sym){
 
 struct symbol *searchDevice (char* sym){
 
- 
  /* puntatore alla cella corrispondente al simbolo cercato della tabella dei simboli dichiarata nell'header serra.h */
   struct symbol *symptr = &symtab[ symhash(sym) % DIMHASH ];
 
@@ -183,15 +194,9 @@ struct ast *newDev(struct ast *ps, struct ast *l)
   char *nameSymbol;
   nameSymbol= (((struct stringVal *)ps)->s->name);
   
-  char devhash[DIMHASH];
-  sprintf(devhash, "#%u", symhash(nameSymbol) % DIMHASH);
-
-  nameSymbol= strdup(strcat(nameSymbol, devhash));  
-  /* in questa maniera il nome del device è il simbolo che sarebbe già presente nella tabella per causa della stringa,
-   * pertanto lo concateniamo a un codice hash */
+  nameSymbol= symhashDev(nameSymbol);
   
   struct symbol *symbolDev= searchDevice(nameSymbol);
-  printf("ID: %s\n", nameSymbol);
   
   if(symbolDev==NULL)    //SE IL DISPOSITIVO NON ESISTE
   {
@@ -200,6 +205,7 @@ struct ast *newDev(struct ast *ps, struct ast *l)
        a->status = 1;  //LO PONGO CON STATO ATTIVO
        a->s= sym;
        a->l = l;
+	   printf("Dispositivo inserito con successo con ID: %s\n", nameSymbol);
        return (struct ast *)a;
     
   }else{
@@ -313,7 +319,7 @@ void dodef(struct symbol *name, struct argsList *syms, struct ast *func)
 
 
 
-struct ast * callInsert(struct device *);
+
 struct ast * callbuiltin(struct funcBuiltIn *);
 struct ast * callbuiltinSystem(struct funcBuiltInSystem *);
 static char* calluser(struct userfunc *);
@@ -389,7 +395,7 @@ char* eval(struct ast *a)
 
   case 'U': v = calluser((struct userfunc *)a); break;
   
-  case 'D': v = callInsert((struct device *)a); break;
+  case 'D': break;
   
   
  // DEVO GESTIRMELO COME NEI CASI SOPRA SCENDENDO L'ALBERO AST CON LA RICORSIONE DI EVAL
@@ -399,17 +405,6 @@ char* eval(struct ast *a)
   return v;
 }
 
-
-
-
-struct ast * callInsert(struct device *d)
-{ 
-     printf("Device inserito con successo\n");
-     return NULL;
-
-    /* yyerror("Errore durante l'inserimento");
-     return 0;*/
-}
 
 
 
@@ -425,24 +420,32 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
      printf("display = ");
      return (struct ast *) v;
      break;
+
    case B_connect:
      printf("Ricerca del dispositivo %s in corso...\n", v);
+     v=symhashDev(v);
      symDev= searchDevice(v);
 
-     if(!symDev){
+     if(symDev){
         printf("Dispositivo Esistente\nRichiesta connessione...\n");     //INSERIRE ENUM CON CODICE DISPOSITIVO COME HTTP 200 AD ESEMPIO
      }else{
         printf("Dispositivo %s: Non Esistente\n", v);  
         return NULL;
      }
-     //statusDevice(symDev);
+     
+     if(symDev-> ){
+        
+     }
+     
      return (struct ast *) symDev;
      break;
+
    case B_reconnect:
      printf("Ricerca del dispositivo %s in corso...\n", v);
+     v=symhashDev(v);
      symDev= searchDevice(v);
 
-     if(!symDev){
+     if(symDev){
         printf("Dispositivo Esistente\nRichiesta Riconnessione...\n");     //INSERIRE ENUM CON CODICE DISPOSITIVO COME HTTP 200 AD ESEMPIO
      }else{
         printf("Dispositivo %s: Non Esistente\n", v);  
@@ -451,11 +454,13 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
      //statusDevice(symDev);
      return (struct ast *) symDev;
      break;
+
    case B_status:
+     v=symhashDev(v);
      printf("Richiesta status in corso per il device %s...\n", v);
      symDev= searchDevice(v);
 
-     if(!symDev){
+     if(symDev){
         printf("Dispositivo %s:  Esistente-> %s\n", v, symDev-> name);
      }else{
         printf("Dispositivo %s:  Non Esistente\n", v);  
@@ -464,17 +469,7 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
      //statusDevice(symDev);
      return (struct ast *) symDev;
      break;
-   case B_insertDevice:
-     printf("Verifica Esistenza dispositivo %s in corso...\n", v);
-     symDev= searchDevice(v);
-     if(!symDev){
-        printf("Dispositivo già esistente, NUOVO inserimento non riuscito\n");    
-        return NULL;
-     }
-     callInsert(symDev);
-     printf("Device inserito con successo\n");
-     return NULL;
-     break;
+
    default:
      yyerror("Funzione built-in sconosciuta %d", functype);
      return 0;
@@ -582,12 +577,12 @@ void treefree(struct ast *a)
     /* two subtrees */
  
   case '1':  case '2':  case '3':  case '4':  case '5':  case '6':
-  case 'L':
+  case 'L': 
     treefree(a->r);
     /* no subtree */
-  case 'K': case 'N': case 'C':case 'F':case 'O':case 'U':
+  case 'K': case 'N': case 'C':case 'F':case 'O':case 'U': case 'D':
     break;
-
+  
   case '=':
     free( ((struct symasgn *)a)->v);
     break;

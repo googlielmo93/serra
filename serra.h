@@ -6,6 +6,7 @@
 struct symbol {
   char *name;
   char *value;
+  struct device *dev;        /* puntatore a device */
   struct ast *func;         /* stmt per le funzioni */
   struct argsList *syms;     /* Lista degli argomenti della funzione */
 };
@@ -39,7 +40,7 @@ struct stringVal {
 struct device {
   int nodetype;         /* tipo nodo D -> dispositivo inserito nella rete */
   int status;          /* definisce lo stato, acceso 1, spento 0 */
-  struct symbol *s;     /* il value in symbol è il codice IDENTIFICATIVO ALFANUMERICO */
+  struct symbol *s;     
   struct ast *l;        /* Lista degli argomenti della funzione utente */
 };
 

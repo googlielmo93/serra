@@ -88,14 +88,7 @@ exp: exp CMP exp         { $$ = newcmp($2, $1, $3); }
    | FUNC explistStmt    { $$ = newfunc($1, $2); }
    | FUNCDEV explistStmt { 
                            $$ = newfunc($1, $2); 
-                           /*
-                               struct symbol *symDev = strdup(searchDevice($1));
-                               if( symDev != NULL ){               // se esiste il nodo allora esegue la funzione
-                                  $$ = newfunc($1, $2);
-                               }else{
-                                  printf("Errore Dispositivo inesistente");
-                               }
-                           */
+                          
                           }
    | INSERT exp ARROW explistStmt   { 
                                         $$ = newDev($2, $4); 
