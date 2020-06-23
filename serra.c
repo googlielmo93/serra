@@ -19,10 +19,8 @@ static unsigned symhash(char *sym) {
 
 
 struct symbol *search(char* sym){
- 
  /* puntatore alla cella corrispondente al simbolo cercato della tabella dei simboli dichiarata nell'header serra.h */
   struct symbol *symptr = &symtab[ symhash(sym) % DIMHASH ];
-  
   int symcount = DIMHASH;      /* viene passata la dimensione della tabella per cercare in tutte le celle di questa il simbolo cercato */
 
   while(--symcount >= 0) {
@@ -74,7 +72,6 @@ struct symbol *searchDevice (char* sym){
         symptr = symtab;                       
     }
   }
-
   return NULL;
 
 }
@@ -185,36 +182,35 @@ struct ast *newDev(struct ast *ps, struct ast *l)
   
   char *nameSymbol;
   nameSymbol= (((struct stringVal *)ps)->s->name);
-  nameSymbol= strdup(strcat(nameSymbol, "#"));
   
   char devhash[DIMHASH];
-  sprintf(devhash, "%u", symhash(nameSymbol) % DIMHASH);
+  sprintf(devhash, "%d", symhash(nameSymbol) % DIMHASH);
+  
   nameSymbol= strdup(strcat(nameSymbol, devhash));  
   /* in questa maniera il nome del device è il simbolo che sarebbe già presente nella tabella per causa della stringa,
    * pertanto lo concateniamo a un codice hash */
   
-  struct symbol *sym= searchDevice(nameSymbol);
-  struct symbol *symbolDev= search(nameSymbol);
+  struct symbol *symbolDev= searchDevice(nameSymbol);
+  printf("ID: %s\n", nameSymbol);
   
-  if(sym==NULL)    // SE IL DEVICE NON ESISTE LO CREIAMO INVOCANDO SEARCH
+  if(symbolDev==NULL)    //SE IL DISPOSITIVO NON ESISTE
   {
-
-    if(symbolDev==NULL){
+       struct symbol *sym= search(nameSymbol);
        a->nodetype = 'D';
        a->status = 1;  //LO PONGO CON STATO ATTIVO
-       a->s= symbolDev;
+       a->s= sym;
        a->l = l;
        return (struct ast *)a;
-    }
     
   }else{
-    printf("Dispositivo già Esistente:");
+    printf("Dispositivo già Esistente\n");
     free(a);
     return ps;
   }
   
   free(a);
-  return NULL;
+  yyerror("Errore: Operazione non riuscita\n");
+  abort(); 
   
 }
 
@@ -225,7 +221,7 @@ struct ast *newcall(struct symbol *s, struct ast *l)
   struct userfunc *a = malloc(sizeof(struct userfunc));
   
   if(!a) {
-    yyerror("Spazio di memoria insufficiente");
+    yyerror("Spazio di memoria insufficiente\n");
     exit(0);
   }
   a->nodetype = 'C';
@@ -240,7 +236,7 @@ struct ast *newref(struct symbol *s)
   struct symref *a = malloc(sizeof(struct symref));
   
   if(!a) {
-    yyerror("Spazio di memoria insufficiente");
+    yyerror("Spazio di memoria insufficiente\n");
     exit(0);
   }
   a->nodetype = 'N';
