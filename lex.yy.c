@@ -941,10 +941,10 @@ case 20:
 YY_RULE_SETUP
 #line 62 "lexer.l"
 {    
-                                int dimString= strlen(yytext);
-                                char subbuff[dimString-1];
-                                memcpy( subbuff, &yytext[1], dimString-2 );
-                                subbuff[dimString] = '\0';
+                                int dimString= strlen(yytext)+1;
+                                char subbuff[dimString-2];
+                                memmove( subbuff, &yytext[1], dimString-3 );
+                                subbuff[dimString-3] = '\0';
                                 yylval.s = search(subbuff); 
                                 return STRING; 
 }

@@ -184,8 +184,8 @@ struct ast *newDev(struct ast *ps, struct ast *l)
   nameSymbol= (((struct stringVal *)ps)->s->name);
   
   char devhash[DIMHASH];
-  sprintf(devhash, "%d", symhash(nameSymbol) % DIMHASH);
-  
+  sprintf(devhash, "#%u", symhash(nameSymbol) % DIMHASH);
+
   nameSymbol= strdup(strcat(nameSymbol, devhash));  
   /* in questa maniera il nome del device è il simbolo che sarebbe già presente nella tabella per causa della stringa,
    * pertanto lo concateniamo a un codice hash */
