@@ -216,7 +216,7 @@ struct ast *newDev(struct symbol *ps, struct argsList *l)
     printf("Dispositivo già Esistente con ID: %s\n", nameSymbol);
   }
   
-  free(d);
+  
   
   if(l!= NULL) { 
           int nargs = 1;
@@ -242,6 +242,7 @@ struct ast *newDev(struct symbol *ps, struct argsList *l)
    }
   
   
+  free(d);
   
   return (struct ast *)d;
 
