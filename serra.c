@@ -44,6 +44,7 @@ struct symbol *search(char* sym){
     if(!symptr->name) {             /* NUOVO SIMBOLO */
       symptr->name = strdup(sym);
       symptr->value = 0;
+      symptr->device = NULL;
       symptr->func = NULL;
       symptr->syms = NULL;
       return symptr;
@@ -202,7 +203,7 @@ struct ast *newDev(struct ast *ps, struct ast *l)
   {
        struct symbol *sym= search(nameSymbol);
        a->nodetype = 'D';
-       a->status = 1;  //LO PONGO CON STATO ATTIVO
+       a->status = 0;  //LO PONGO CON STATO SPENTO DI DEFAULT
        a->s= sym;
        a->l = l;
 	   printf("Dispositivo inserito con successo con ID: %s\n", nameSymbol);
@@ -230,11 +231,12 @@ struct ast *newcall(struct symbol *s, struct ast *l)
     yyerror("Spazio di memoria insufficiente\n");
     exit(0);
   }
-  a->nodetype = 'C';
+  a->nodetype = 'U';
   a->l = l;
   a->s = s;
   return (struct ast *)a;
 }
+
 
 
 struct ast *newref(struct symbol *s)
@@ -495,10 +497,10 @@ struct ast * callbuiltinSystem(struct funcBuiltInSystem *f)
 
 static char * calluser(struct userfunc *f)
 {
-  struct symbol *fn = f->s;	/* function name */
-  struct argsList *sl;		/* dummy arguments */
-  struct ast *args = f->l;	/* actual arguments */
-  char *oldval, *newval;	/* saved arg values */
+  struct symbol *fn = f->s;   /* Nome Funzione */
+  struct argsList *sl;        /* Argomenti Lista */
+  struct ast *args = f->l;    /* Argomento attuale */
+  char *oldval, *newval;      /* Memorizza il valore dell'argomento */
   char *v;
   int nargs;
   int i;
@@ -508,37 +510,42 @@ static char * calluser(struct userfunc *f)
     return 0;
   }
 
-  /* count the arguments */
+  /* Contatore Argomenti */
   sl = fn->syms;
   for(nargs = 0; sl; sl = sl->next)
     nargs++;
 
-  /* prepare to save them */
+  /* Crea Spazio di Memoria adeguato per gli Argomenti */
   oldval = (char *)malloc(nargs * sizeof(char));
   newval = (char *)malloc(nargs * sizeof(char));
   if(!oldval || !newval) {
-    yyerror("Out of space in %s", fn->name); return 0;
+    yyerror("Fuori Spazio in %s", fn->name); return 0;
   }
   
-  /* evaluate the arguments */
+  /* Valuta gli argomenti */
   for(i = 0; i < nargs; i++) {
+
     if(!args) {
-      yyerror("too few args in call to %s", fn->name);
-      free(oldval); free(newval);
+      yyerror("Troppo pochi argomenti nella chiamata per %s", fn->name);
+      free(oldval); 
+      free(newval);
       return 0;
     }
 
-    if(args->nodetype == 'L') {        /* if this is a list node */
+    if(args->nodetype == 'L') {        /* se è una lista di nodi */
       sprintf(newval[i], "%s", eval(args->l) );
       args = args->r;
-    } else {                           /* if it's the end of the list */
+
+    } else {                           /* se è la fine della lista di nodi */
       sprintf(newval[i], "%s", eval(args) );
       args = NULL;
     }
   }
-		     
-  /* save old values of dummies, assign new ones */
+  
+  
+  /* salvare i vecchi valori degli argomenti, per assegnarne di nuovi */
   sl = fn->syms;
+  
   for(i = 0; i < nargs; i++) {
     struct symbol *s = sl->sym;
 
@@ -550,13 +557,13 @@ static char * calluser(struct userfunc *f)
 
   free(newval);
 
-  /* evaluate the function */
+  /* Valutazione della funzione */
   v= malloc(sizeof( eval(fn->func)));
   sprintf(v, "%s", eval(fn->func) );
   
   
 
-  /* put the dummies back */
+  /* Rimette a posto i valori */
   sl = fn->syms;
   for(i = 0; i < nargs; i++) {
     struct symbol *s = sl->sym;
@@ -568,6 +575,8 @@ static char * calluser(struct userfunc *f)
   free(oldval);
   return v;
 }
+
+
 
 
 void treefree(struct ast *a)

@@ -52,7 +52,7 @@ exec: /* nothing */
                       treefree($2);
                     }
                          
-    | exec CMD NAME '(' argsList ')' '=' listStmt EOL  {
+    | exec CMD NAME '(' argsList ')' '=' listStmt EOL  {             // CREA UNA NUOVA FUNZIONE
                                                             dodef($3, $5, $8);
                                                             printf("Definito %s\n> ", $3->name); 
                                                         }
