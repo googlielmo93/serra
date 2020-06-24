@@ -6,9 +6,9 @@
 struct symbol {
   char *name;
   char *value;
-  struct device *dev;        /* puntatore a device */
   struct ast *func;         /* stmt per le funzioni */
-  struct argsList *syms;     /* Lista degli argomenti della funzione */
+  struct ast *dev;         /* stmt per le funzioni */
+  struct argsList *syms;     /* Lista dei simboli */
 };
 
 
@@ -41,7 +41,7 @@ struct device {
   int nodetype;         /* tipo nodo D -> dispositivo inserito nella rete */
   int status;          /* definisce lo stato, acceso 1, spento 0 */
   struct symbol *s;     
-  struct ast *l;        /* Lista degli argomenti della funzione utente */
+  struct ast *l;        /* Lista dei device collegati */
 };
 
 
@@ -165,7 +165,7 @@ struct ast *newref(struct symbol *s);
 struct ast *newasgn(struct symbol *s, struct ast *v);
 struct ast *newnum(double d);
 struct ast *newString(struct symbol *s);
-struct ast *newDev(struct ast *ps, struct ast *l);
+struct ast *newDev(struct symbol *ps, struct argsList *l);
 struct ast *newContent(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
 
 

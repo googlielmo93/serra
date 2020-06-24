@@ -9,7 +9,16 @@
 
 %%
  /* Operazioni a singolo carattere */
-"+" | "-" | "=" | "," | ";" | "(" | ")" | "."     { return yytext[0]; }
+"+" { return yytext[0]; }
+"-" { return yytext[0]; }
+"=" { return yytext[0]; }
+"," { return yytext[0]; }
+";" { return yytext[0]; }
+"(" { return yytext[0]; }
+")" { return yytext[0]; }
+"." { return yytext[0]; }
+"[" { return yytext[0]; }
+"]" { return yytext[0]; }
 
  /* Operazioni di comparazione *
 ">"     { yylval. func = 1; return CMP; }

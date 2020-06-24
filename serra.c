@@ -37,14 +37,15 @@ struct symbol *search(char* sym){
 
   while(--symcount >= 0) {
 
-    if(symptr->name && !strcmp(symptr->name, sym)) {         /* se trova il simbolo cercato ritorna il puntatore alla cella contenente il simbolo cercato */
+    if(symptr->name && !strcmp(symptr->name, sym)) {        
+                                                  /* se trova il simbolo cercato ritorna il puntatore alla cella contenente il simbolo cercato */
         return symptr; 
     }
 
     if(!symptr->name) {             /* NUOVO SIMBOLO */
       symptr->name = strdup(sym);
       symptr->value = 0;
-      symptr->device = NULL;
+      symptr->dev = NULL;
       symptr->func = NULL;
       symptr->syms = NULL;
       return symptr;
@@ -183,17 +184,20 @@ struct ast *newfuncSystem(int functype)
 
 
 
-struct ast *newDev(struct ast *ps, struct ast *l)
+
+
+
+struct ast *newDev(struct symbol *ps, struct argsList *l)
 {
-  struct device *a = malloc(sizeof(struct device));
+  struct device *d = malloc(sizeof(struct device));
   
-  if(!a) {
+  if(!d) {
     yyerror("Spazio di memoria insufficiente");
     exit(0);
   }
   
   char *nameSymbol;
-  nameSymbol= (((struct stringVal *)ps)->s->name);
+  nameSymbol= ps->name;
   
   nameSymbol= symhashDev(nameSymbol);
   
@@ -202,23 +206,45 @@ struct ast *newDev(struct ast *ps, struct ast *l)
   if(symbolDev==NULL)    //SE IL DISPOSITIVO NON ESISTE
   {
        struct symbol *sym= search(nameSymbol);
-       a->nodetype = 'D';
-       a->status = 0;  //LO PONGO CON STATO SPENTO DI DEFAULT
-       a->s= sym;
-       a->l = l;
-	   printf("Dispositivo inserito con successo con ID: %s\n", nameSymbol);
-       return (struct ast *)a;
+       d->nodetype = 'D';
+       d->status = 0;  //LO PONGO CON STATO SPENTO DI DEFAULT
+       d->s= sym;
+       d->l = l;
+       
     
   }else{
-    printf("Dispositivo già Esistente\n");
-    free(a);
-    return ps;
+    printf("Dispositivo già Esistente con ID: %s\n", nameSymbol);
   }
   
-  free(a);
-  yyerror("Errore: Operazione non riuscita\n");
-  abort(); 
+  free(d);
   
+  if(l!= NULL) { 
+          int nargs = 1;
+          printf("Dispositivo inserito con successo con ID: %s \n", nameSymbol);
+
+          if((l-> next)!=NULL){
+             for(; l; l = l->next)
+                  nargs++;
+          }
+          
+          if(nargs>1){
+              printf(" -> ", nameSymbol);
+              newDev(l->next->sym, l->next->sym->syms);
+          }
+
+          if(nargs==1){
+              printf(" -> ", nameSymbol);
+              newDev(l->sym, l->sym->syms);
+          }
+          
+   }else{
+          printf("Dispositivo inserito con successo con ID: %s\n", nameSymbol);
+   }
+  
+  
+  
+  return (struct ast *)d;
+
 }
 
 
@@ -434,11 +460,7 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
         printf("Dispositivo %s: Non Esistente\n", v);  
         return NULL;
      }
-     
-     if(symDev-> ){
-        
-     }
-     
+
      return (struct ast *) symDev;
      break;
 
@@ -506,7 +528,7 @@ static char * calluser(struct userfunc *f)
   int i;
 
   if(!fn->func) {
-    yyerror("call to undefined function", fn->name);
+    yyerror("Chiamata ad una funzione insesistente", fn->name);
     return 0;
   }
 
@@ -575,6 +597,7 @@ static char * calluser(struct userfunc *f)
   free(oldval);
   return v;
 }
+
 
 
 

@@ -35,6 +35,7 @@
 
 %type <a> exp stmt listStmt explistStmt
 %type <sl> argsList
+%type <sl> argsListDevice
 
 %start exec
 
@@ -42,7 +43,7 @@
 
 exec: /* nothing */
     | exec stmt EOL {
-                      char *valEval=eval($2);
+                      char *valEval= eval($2);
                       if(valEval != NULL){
                             printf("%s\n> ", valEval);
                       }else{
@@ -53,9 +54,20 @@ exec: /* nothing */
                     }
                          
     | exec CMD NAME '(' argsList ')' '=' listStmt EOL  {             // CREA UNA NUOVA FUNZIONE
-                                                            dodef($3, $5, $8);
+                                                            dodef($3, $5, $8);    // PULISCE LA LISTA IN QUANTO CI SERVE SOLTANTO IL PUNTATORE AL PRIMO NODO IN
+                                                                                  //TESTA DA CUI POSSIAMO RICOSTRUIRE CON IL PUNTATORE A NEXT TUTTA LA LISTA
                                                             printf("Definito %s\n> ", $3->name); 
                                                         }
+    | INSERT STRING ARROW '[' argsListDevice ']'   {       //COSTRUISCE LA LISTA DI PUNTATORI AI SIMBOLI CIOÈ AI DEVICE COLLEGATI AL DEVICE CHE SI STA ISNERENDO
+                                                           dodef($2, $5, NULL);
+                                                           newDev($2,$5);
+                                                           printf("Operazione di inserimento completata con successo\n> "); 
+                          }
+    | INSERT STRING       { 
+                                         dodef($2, NULL, NULL);
+                                         newDev($2,NULL);
+                                         printf("Operazione di inserimento completata con successo\n> "); 
+                          }
 
     | exec error EOL { 
                         yyerrok; printf("> "); 
@@ -88,13 +100,6 @@ exp: exp CMP exp         { $$ = newcmp($2, $1, $3); }
    | FUNC explistStmt    { $$ = newfunc($1, $2); }
    | FUNCDEV explistStmt { 
                            $$ = newfunc($1, $2); 
-                          
-                          }
-   | INSERT exp ARROW explistStmt   { 
-                                        $$ = newDev($2, $4); 
-                          }
-   | INSERT exp           { 
-                                        $$ = newDev($2, NULL); 
                           }
    | SYSTEM               { $$ = newfuncSystem($1); }
    | STRING               { $$ = newString($1); }
@@ -111,6 +116,11 @@ explistStmt: exp
 
 argsList: NAME       { $$ = newargsList($1, NULL); }
         | NAME ',' argsList { $$ = newargsList($1, $3); }
+;
+
+
+argsListDevice: STRING    { $$ = newargsList($1, NULL); }
+| STRING ',' argsListDevice { $$ = newargsList($1, $3); }
 ;
 
 
