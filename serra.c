@@ -210,7 +210,7 @@ struct ast *newDev(struct symbol *ps, struct argsList *l)
        d->status = 0;  //LO PONGO CON STATO SPENTO DI DEFAULT
        d->s= sym;
        d->l = l;
-       
+       printf("Dispositivo inserito con successo con ID: %s \n", nameSymbol);
     
   }else{
     printf("Dispositivo già Esistente con ID: %s\n", nameSymbol);
@@ -220,7 +220,6 @@ struct ast *newDev(struct symbol *ps, struct argsList *l)
   
   if(l!= NULL) { 
           int nargs = 1;
-          printf("Dispositivo inserito con successo con ID: %s \n", nameSymbol);
 
           if((l-> next)!=NULL){
              for(; l; l = l->next)
