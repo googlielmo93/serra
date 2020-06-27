@@ -503,7 +503,7 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
      break;
 
    default:
-     yyerror("Funzione built-in sconosciuta %d", functype);
+     yyerror("Funzione built-in sconosciuta %d\n", functype);
      return 0;
  }
 }
@@ -519,7 +519,7 @@ struct ast * callbuiltinSystem(struct funcBuiltInSystem *f)
      return 0;
      break;
    default:
-     yyerror("Unknown built-in function %d", functype);
+     yyerror("Funzione di sistema built-in sconosciuta %d\n", functype);
  }
 }
 
