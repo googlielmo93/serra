@@ -2,7 +2,6 @@
 
 **Linguaggi e Traduttori**
 
-** **
 
 +--------------------------------------+--------------------------------------+
 | **Allievi Ingegneri**                | **Alla Cortese Attenzione**          |
@@ -13,13 +12,12 @@
 |                                      |                                      |
 | Vincenzo La Mantia                   |                                      |
 |                                      |                                      |
-|                                      |                                      |
 +--------------------------------------+--------------------------------------+
 
 **Oggetto**: Proposta di Tesina per la Materia Linguaggi e Traduttori
 
-Oggi, sempre più spesso, si sente parlare di**Industria 4.0**. Questo
-termine indica una tendenza verso l'[automazione
+Oggi, sempre piu' spesso, si sente parlare di **Industria 4.0**.
+Questo termine indica una tendenza verso l'[automazione
 industriale](https://it.wikipedia.org/wiki/Automazione_industriale) che
 integra alcune nuove
 [tecnologie](https://it.wikipedia.org/wiki/Tecnologia) produttive per
@@ -120,28 +118,9 @@ o   Periferica:
 
 **Costrutti:**
 
-if then else, do-while, while,
-[[GB1]](#_msocom_1) [[MC2]](#_msocom_2) interval between, altri da
-definire all’uopo.
+if then else, do-while, while,interval between, altri
 
- 
 
-**Programmazione di tipo sequenziale****:**
-
-*Le operazioni dovranno essere svolte in funzione della richiesta
-dell’utente. Cioè sarà il programmatore a definire il tipo di operazione
-che vuole eseguire: se prima vuole innaffiare e poi riscaldare il
-terreno o viceversa.*
-
-* *
-
-*Avevamo parlato di ereditarietà? Deve essere a oggetti quindi? Era una
-buona idea però in quel caso si deve cambiare e scriverla qui (classe
-madre: dispositivo, classe figlio: periferica). Credo comunque buona
-l’idea di vincenzo (mi sembra l’avevi proposta tu, scusa mario
-eventualmente xD)*
-
-* *
 
 **Utilizzatori finali e ambito applicativo****:**
 
@@ -158,11 +137,5 @@ eventualmente xD)*
  
 
 * * * * *
-
-Siete ancora collegati? [[GB1]](#_msoanchor_1)
-
  
 
-si [[MC2]](#_msoanchor_2)
-
- 
