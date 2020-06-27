@@ -221,25 +221,33 @@ struct ast *newDev(struct symbol *ps, struct argsList *l)
   
   
   if(l!= NULL) { 
-          int nargs = 1;
 
-          if((l-> next)!=NULL){
-             
-             for( lpt=l; lpt; lpt = lpt->next)   
-               nargs++;
+          printf("%s connesso con ->   ", nameSymbol); 
+          int countDeviceUnknown = 0;
+
+          printf("[");
+          for( lpt=l; lpt; lpt = lpt->next){
+                 printf(" [%s] ", nameSymbol); 
+
+                 
+                 nameSymbol = lpt->sym->name;
+                 nameSymbol = symhashDev(nameSymbol);
+
+                 if(! (symbolDev = searchDevice(nameSymbol))){
+                      printf("* ");
+                      countDeviceUnknown++;
+                 }
+
+
+                 if(lpt->next != NULL) 
+                      printf("-", nameSymbol);
 
           }
           
-          
-          if(nargs>1){
-              newDev(l->sym, l->sym->syms);
-          }
+          printf("]\n"); 
 
-          if(nargs==1){
-              printf(" -> %s", nameSymbol);
-              newDev(l->sym, l->sym->syms);
-          }
-          
+          if(countDeviceUnknown > 0)    printf("Devices con (*) sconosciuti, inserire devices\n");
+
    }
   
   
