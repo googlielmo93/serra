@@ -572,10 +572,10 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    44,    44,    45,    56,    61,    66,    72,    75,    79,
-      80,    81,    82,    86,    87,    95,    98,    99,   100,   101,
-     104,   105,   106,   107,   108,   112,   113,   117,   118,   122,
-     123
+       0,    44,    44,    45,    56,    61,    67,    73,    74,    80,
+      81,    82,    83,    87,    88,    96,    99,   100,   101,   102,
+     105,   106,   107,   108,   109,   113,   114,   118,   119,   123,
+     124
 };
 #endif
 
@@ -644,9 +644,9 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       2,     8,     0,     0,     6,     1,     0,    17,    21,    22,
+       2,     7,     0,     0,     6,     1,     0,    17,    21,    22,
        0,    20,     0,     0,     0,     0,     0,     0,    12,     0,
-       7,     0,     0,    25,    18,    19,     0,     0,     0,     0,
+       8,     0,     0,    25,    18,    19,     0,     0,     0,     0,
        3,     0,     0,    23,     0,     0,    13,    13,     0,    16,
       15,    29,     0,    24,    26,     0,     9,    11,    27,     0,
        0,     5,    13,    13,     0,     0,    30,    14,    10,    28,
@@ -719,7 +719,7 @@ static const yytype_int8 yyr1[] =
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     0,     3,     9,     6,     2,     3,     1,     4,
+       0,     2,     0,     3,     9,     6,     2,     1,     3,     4,
        6,     4,     1,     0,     3,     3,     3,     1,     2,     2,
        1,     1,     1,     3,     4,     1,     3,     1,     3,     1,
        3
@@ -1220,175 +1220,177 @@ yyreduce:
   case 4:
 #line 56 "parser.y"
                                                        {             // CREA UNA NUOVA FUNZIONE
-                                                            dodef((yyvsp[-6].s), (yyvsp[-4].sl), (yyvsp[-1].a));    // PULISCE LA LISTA IN QUANTO CI SERVE SOLTANTO IL PUNTATORE AL PRIMO NODO IN
-                                                                                  //TESTA DA CUI POSSIAMO RICOSTRUIRE CON IL PUNTATORE A NEXT TUTTA LA LISTA
+                                                            defSymRef((yyvsp[-6].s), (yyvsp[-4].sl), (yyvsp[-1].a)); 
                                                             printf("Definito %s\n> ", (yyvsp[-6].s)->name); 
+                                                            yyerrok;
                                                         }
 #line 1228 "parser.tab.c"
     break;
 
   case 5:
 #line 61 "parser.y"
-                                                   {       //COSTRUISCE LA LISTA DI PUNTATORI AI SIMBOLI CIOÈ AI DEVICE COLLEGATI AL DEVICE CHE SI STA ISNERENDO
-                                                           dodef((yyvsp[-4].str), (yyvsp[-1].sl), NULL);
+                                                   {       //COSTRUISCE LA LISTA DI PUNTATORI AI SIMBOLI CIOÈ AI DEVICE COLLEGATI AL DEVICE CHE SI STA INSERENDO
+                                                           defSymRef((yyvsp[-4].str), (yyvsp[-1].sl), NULL);
                                                            newDev((yyvsp[-4].str),(yyvsp[-1].sl));
                                                            printf("Operazione di inserimento completata con successo\n> "); 
+                                                           yyerrok;
                           }
-#line 1238 "parser.tab.c"
+#line 1239 "parser.tab.c"
     break;
 
   case 6:
-#line 66 "parser.y"
+#line 67 "parser.y"
                           { 
-                                         dodef((yyvsp[0].str), NULL, NULL);
+                                         defSymRef((yyvsp[0].str), NULL, NULL);
                                          newDev((yyvsp[0].str),NULL);
                                          printf("Operazione di inserimento completata con successo\n> "); 
+                                         yyerrok;
                           }
-#line 1248 "parser.tab.c"
+#line 1250 "parser.tab.c"
     break;
 
   case 7:
-#line 72 "parser.y"
-                     { 
-                        yyerrok; printf("> "); 
-                     }
+#line 73 "parser.y"
+                     {  yyerrok; }
 #line 1256 "parser.tab.c"
     break;
 
   case 8:
-#line 75 "parser.y"
-                     {  yyerrok; }
-#line 1262 "parser.tab.c"
+#line 74 "parser.y"
+                     { 
+                        yyerrok;
+                     }
+#line 1264 "parser.tab.c"
     break;
 
   case 9:
-#line 79 "parser.y"
+#line 80 "parser.y"
                                       { (yyval.a) = newContent('I', (yyvsp[-2].a), (yyvsp[0].a), NULL); }
-#line 1268 "parser.tab.c"
+#line 1270 "parser.tab.c"
     break;
 
   case 10:
-#line 80 "parser.y"
+#line 81 "parser.y"
                                           { (yyval.a) = newContent('I', (yyvsp[-4].a), (yyvsp[-2].a), (yyvsp[0].a)); }
-#line 1274 "parser.tab.c"
+#line 1276 "parser.tab.c"
     break;
 
   case 11:
-#line 81 "parser.y"
+#line 82 "parser.y"
                                       { (yyval.a) = newContent('W', (yyvsp[-2].a), (yyvsp[0].a), NULL); }
-#line 1280 "parser.tab.c"
+#line 1282 "parser.tab.c"
     break;
 
   case 13:
-#line 86 "parser.y"
+#line 87 "parser.y"
                          { (yyval.a) = NULL; }
-#line 1286 "parser.tab.c"
+#line 1288 "parser.tab.c"
     break;
 
   case 14:
-#line 87 "parser.y"
+#line 88 "parser.y"
                              {  if ((yyvsp[0].a) == NULL)
                                     (yyval.a) = (yyvsp[-2].a);
                                 else
                                     (yyval.a) = newast('L', (yyvsp[-2].a), (yyvsp[0].a));
                              }
-#line 1296 "parser.tab.c"
+#line 1298 "parser.tab.c"
     break;
 
   case 15:
-#line 95 "parser.y"
+#line 96 "parser.y"
                          { (yyval.a) = newcmp((yyvsp[-1].func), (yyvsp[-2].a), (yyvsp[0].a)); }
-#line 1302 "parser.tab.c"
+#line 1304 "parser.tab.c"
     break;
 
   case 16:
-#line 98 "parser.y"
+#line 99 "parser.y"
                          { (yyval.a) = (yyvsp[-1].a); }
-#line 1308 "parser.tab.c"
+#line 1310 "parser.tab.c"
     break;
 
   case 17:
-#line 99 "parser.y"
+#line 100 "parser.y"
                          { (yyval.a) = newnum((yyvsp[0].d)); }
-#line 1314 "parser.tab.c"
+#line 1316 "parser.tab.c"
     break;
 
   case 18:
-#line 100 "parser.y"
+#line 101 "parser.y"
                          { (yyval.a) = newfunc((yyvsp[-1].func), (yyvsp[0].a)); }
-#line 1320 "parser.tab.c"
+#line 1322 "parser.tab.c"
     break;
 
   case 19:
-#line 101 "parser.y"
+#line 102 "parser.y"
                          { 
                            (yyval.a) = newfunc((yyvsp[-1].func), (yyvsp[0].a)); 
                           }
-#line 1328 "parser.tab.c"
+#line 1330 "parser.tab.c"
     break;
 
   case 20:
-#line 104 "parser.y"
+#line 105 "parser.y"
                           { (yyval.a) = newfuncSystem((yyvsp[0].func)); }
-#line 1334 "parser.tab.c"
+#line 1336 "parser.tab.c"
     break;
 
   case 21:
-#line 105 "parser.y"
+#line 106 "parser.y"
                           { (yyval.a) = newString((yyvsp[0].str)); }
-#line 1340 "parser.tab.c"
+#line 1342 "parser.tab.c"
     break;
 
   case 22:
-#line 106 "parser.y"
+#line 107 "parser.y"
                           { (yyval.a) = newref((yyvsp[0].s)); }
-#line 1346 "parser.tab.c"
+#line 1348 "parser.tab.c"
     break;
 
   case 23:
-#line 107 "parser.y"
+#line 108 "parser.y"
                           { (yyval.a) = newasgn((yyvsp[-2].s), (yyvsp[0].a)); }
-#line 1352 "parser.tab.c"
+#line 1354 "parser.tab.c"
     break;
 
   case 24:
-#line 108 "parser.y"
+#line 109 "parser.y"
                               { (yyval.a) = newcall((yyvsp[-3].s), (yyvsp[-1].a)); }
-#line 1358 "parser.tab.c"
+#line 1360 "parser.tab.c"
     break;
 
   case 26:
-#line 113 "parser.y"
+#line 114 "parser.y"
                                   { (yyval.a) = newast('L', (yyvsp[-2].a), (yyvsp[0].a)); }
-#line 1364 "parser.tab.c"
+#line 1366 "parser.tab.c"
     break;
 
   case 27:
-#line 117 "parser.y"
+#line 118 "parser.y"
                      { (yyval.sl) = newargsList((yyvsp[0].s), NULL); }
-#line 1370 "parser.tab.c"
+#line 1372 "parser.tab.c"
     break;
 
   case 28:
-#line 118 "parser.y"
+#line 119 "parser.y"
                             { (yyval.sl) = newargsList((yyvsp[-2].s), (yyvsp[0].sl)); }
-#line 1376 "parser.tab.c"
+#line 1378 "parser.tab.c"
     break;
 
   case 29:
-#line 122 "parser.y"
+#line 123 "parser.y"
                           { (yyval.sl) = newargsList((yyvsp[0].str), NULL); }
-#line 1382 "parser.tab.c"
+#line 1384 "parser.tab.c"
     break;
 
   case 30:
-#line 123 "parser.y"
+#line 124 "parser.y"
                             { (yyval.sl) = newargsList((yyvsp[-2].str), (yyvsp[0].sl)); }
-#line 1388 "parser.tab.c"
+#line 1390 "parser.tab.c"
     break;
 
 
-#line 1392 "parser.tab.c"
+#line 1394 "parser.tab.c"
 
       default: break;
     }
@@ -1582,5 +1584,5 @@ yyreturn:
   return yyresult;
 }
 
-#line 127 "parser.y"
+#line 128 "parser.y"
 

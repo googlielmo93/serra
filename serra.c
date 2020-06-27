@@ -233,14 +233,14 @@ struct ast *newDev(struct symbol *ps, struct argsList *l)
                  nameSymbol = lpt->sym->name;
                  nameSymbol = symhashDev(nameSymbol);
 
-                 if(! (symbolDev = searchDevice(nameSymbol))){
+                 if(! (searchDevice(nameSymbol))){
                       printf("* ");
                       countDeviceUnknown++;
                  }
 
 
                  if(lpt->next != NULL) 
-                      printf("-", nameSymbol);
+                      printf("-");
 
           }
           
@@ -344,8 +344,8 @@ void argsListfree(struct argsList *sl)
 }
 
 
-/* define a function */
-void dodef(struct symbol *name, struct argsList *syms, struct ast *func)
+//Collega nella struct symbol passata come parametro i riferimenti alla argsList e all'AST che definisce
+void defSymRef(struct symbol *name, struct argsList *syms, struct ast *func)
 {
   if(name->syms) argsListfree(name->syms);
   if(name->func) treefree(name->func);

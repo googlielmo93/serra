@@ -54,25 +54,23 @@ exec: /* nothing */
                     }
                          
     | exec CMD NAME '(' argsList ')' '=' listStmt EOL  {             // CREA UNA NUOVA FUNZIONE
-                                                            dodef($3, $5, $8);    // PULISCE LA LISTA IN QUANTO CI SERVE SOLTANTO IL PUNTATORE AL PRIMO NODO IN
-                                                                                  //TESTA DA CUI POSSIAMO RICOSTRUIRE CON IL PUNTATORE A NEXT TUTTA LA LISTA
+                                                            defSymRef($3, $5, $8); 
                                                             printf("Definito %s\n> ", $3->name); 
                                                         }
-    | INSERT STRING ARROW '[' argsListDevice ']'   {       //COSTRUISCE LA LISTA DI PUNTATORI AI SIMBOLI CIOÈ AI DEVICE COLLEGATI AL DEVICE CHE SI STA ISNERENDO
-                                                           dodef($2, $5, NULL);
+    | INSERT STRING ARROW '[' argsListDevice ']'   {       //COSTRUISCE LA LISTA DI PUNTATORI AI SIMBOLI CIOÈ AI DEVICE COLLEGATI AL DEVICE CHE SI STA INSERENDO
+                                                           defSymRef($2, $5, NULL);
                                                            newDev($2,$5);
                                                            printf("Operazione di inserimento completata con successo\n> "); 
                           }
     | INSERT STRING       { 
-                                         dodef($2, NULL, NULL);
+                                         defSymRef($2, NULL, NULL);
                                          newDev($2,NULL);
                                          printf("Operazione di inserimento completata con successo\n> "); 
                           }
-
-    | exec error EOL { 
-                        yyerrok; printf("> "); 
-                     }
     | NAME           {  yyerrok; }
+    | exec error EOL {                 //GESTIONE DEGLI ERRORI
+                        yyerrok;
+                     }
 ;
 
  

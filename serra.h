@@ -170,7 +170,7 @@ struct ast *newContent(int nodetype, struct ast *cond, struct ast *tl, struct as
 
 
 /* Per la definizione di una nuova funzione*/
-void dodef(struct symbol *name, struct argsList *syms, struct ast *stmts);
+void defSymRef(struct symbol *name, struct argsList *syms, struct ast *stmts);
 
 
 /* evaluate an AST */
