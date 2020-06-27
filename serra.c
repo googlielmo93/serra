@@ -23,7 +23,8 @@ unsigned char * symhashDev(char * nameSymbol){
   char devhash[DIMHASH];
   sprintf(devhash, "#%u", symhash(nameSymbol) % DIMHASH);
 
-  nameSymbol= strdup(strcat(nameSymbol, devhash));  
+  return nameSymbol= strdup(strcat(nameSymbol, devhash));  
+  
   /* in questa maniera il nome del device è il simbolo che sarebbe già presente nella tabella per causa della stringa,
    * pertanto lo concateniamo a un codice hash */
 }
@@ -190,6 +191,7 @@ struct ast *newfuncSystem(int functype)
 struct ast *newDev(struct symbol *ps, struct argsList *l)
 {
   struct device *d = malloc(sizeof(struct device));
+  struct argsList *lpt;
   
   if(!d) {
     yyerror("Spazio di memoria insufficiente");
@@ -222,26 +224,24 @@ struct ast *newDev(struct symbol *ps, struct argsList *l)
           int nargs = 1;
 
           if((l-> next)!=NULL){
-             for(; l; l = l->next)
-                  nargs++;
+             
+             for( lpt=l; lpt; lpt = lpt->next)   
+               nargs++;
+
           }
           
+          
           if(nargs>1){
-              printf(" -> ", nameSymbol);
-              newDev(l->next->sym, l->next->sym->syms);
+              newDev(l->sym, l->sym->syms);
           }
 
           if(nargs==1){
-              printf(" -> ", nameSymbol);
+              printf(" -> %s", nameSymbol);
               newDev(l->sym, l->sym->syms);
           }
           
-   }else{
-          printf("Dispositivo inserito con successo con ID: %s\n", nameSymbol);
    }
   
-  
-  free(d);
   
   return (struct ast *)d;
 
