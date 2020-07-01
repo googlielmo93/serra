@@ -38,107 +38,106 @@ piccole-medie dimensioni e inoltre permetterà di creare funzioni da
 parte dell’utente, definendo delle funzionalità aggiuntive
 personalizzate.
 
-
+ 
 
 *(
-	dettagli: *[*https://agronotizie.imagelinenetwork.com/vivaismo-e-sementi/2017/12/04/le-tecniche-applicate-alle-serre-e-alle-colture-protette-2-parte/56638*](https://agronotizie.imagelinenetwork.com/vivaismo-e-sementi/2017/12/04/le-tecniche-applicate-alle-serre-e-alle-colture-protette-2-parte/56638)*)*
-	
-	*Il sistema dovrà essere in grado di gestire le seguenti operazioni di
-	automazione:*
-	
-	*- condizionamenti*
-	
-	*- riscaldamento/raffreddamento del terreno/aria*
-	
-	*- coltivazione*
-	
-	*- annaffiamento*
-	
-	*- rasatura del prato (giardino) ecc*
-	
-	
-	
-	
-	
-	**Tipi:**
-	
-	·         Tipi base del linguaggio:
-	
-	o   Stringhe
-	
-	o   Interi (32 Bit)
-	
-	o   Reali (64 Bit)
-	
-	o   Boolean (true, false)
-	
-	·         Tipi composti:
-	
-	o   Time (tipo prodotto cartesiano: identifica giorno mese orario nel
-	formato giorno, mese, ora, anno: 9 Marzo 2012 11:00 : int char int int
-		int)
-	
-	o   Mapping (array) / funzioni (condizionamento, annaffiamento,
-									coltivazione, riscaldamento e altre da pensare): il programmatore deve
-									essere in grado di creare funzioni autonome per definire il proprio
-									metodo di irrigazione regolarizzando il riscaldamento del terreno. In
-									alternativa possono essere definite funzioni più basso livello per
-									valutare per esempio la temperatura dell’area ecc. in base a ciò che
-									l’utente vuole fare ecc.
-									
-									o   Dispositivo:
-									
-									§  Struttura:
-									
-									·         Stringa -\> Nome Dispositivo
-									
-									·         Posizione (opzionale)-\> posizione intesa all’interno di una
-									rete Lista di puntatori a Periferica -\> Contiene i riferimenti ai tipi
-									sensore definiti sotto
-									
-									·         Boolean -\> Dispositivo Acceso o Spento (true, false)
-									
-									
-									
-									o   Periferica:
-									
-									§  Struttura:
-									
-									·         Stringa -\> Tipo Sensore o Attuatore
-									
-									·         Boolean -\> Sensore/periferica (true, false)
-									
-									·         Stringa -\> Codice periferica
-									
-									
-									
-									
-									
-									**Costrutti:**
-									
-									if then else, do-while, while,interval between, altri
-										
-										
-										
-										**Utilizzatori finali e ambito applicativo****:**
-										
-										** **
-										
-										** **
-										
-										**Problemi legati alla robotica:**
-										
-										
-										
-										
-										
-										
-										
-										* * * * *
-										
-										
+dettagli:*[*https://agronotizie.imagelinenetwork.com/vivaismo-e-sementi/2017/12/04/le-tecniche-applicate-alle-serre-e-alle-colture-protette-2-parte/56638*](https://agronotizie.imagelinenetwork.com/vivaismo-e-sementi/2017/12/04/le-tecniche-applicate-alle-serre-e-alle-colture-protette-2-parte/56638)*)*
+
+*Il sistema dovrà essere in grado di gestire seguenti operazioni di
+automazione:*
+
+*- condizionamenti*
+
+*- riscaldamento/raffreddamento del terreno/aria*
+
+*- coltivazione*
+
+*- annaffiamento*
+
+*- rasatura del prato (giardino) ecc*
+
+ 
+
+ 
+
+ 
+
+**Tipi:**
+
+·         Tipi base del linguaggio:
+
+o   Stringhe
+
+o   Interi (32 Bit)
+
+o   Reali (64 Bit)
+
+o   Boolean (true, false)
+
+·         Tipi composti:
+
+o   Time (tipo prodotto cartesiano: identifica giorno mese orario nel
+formato giorno, mese, ora, anno: 9 Marzo 2012 11:00 : int char int int
+int)
+
+o   Mapping (array) / funzioni (condizionamento, annaffiamento,
+coltivazione, riscaldamento e altre da pensare): il programmatore deve
+essere in grado di creare funzioni autonome per definire il proprio
+metodo di irrigazione regolarizzando il riscaldamento del terreno. In
+alternativa possono essere definite funzioni più basso livello per
+valutare per esempio la temperatura dell’area ecc. in base a ciò che
+l’utente vuole fare ecc.
+
+o   Dispositivo:
+
+§  Struttura:
+
+·         Stringa -\> Nome Dispositivo
+
+·         Posizione (opzionale)-\> posizione intesa all’interno di una
+rete Lista di puntatori a Periferica -\> Contiene i riferimenti ai tipi
+sensore definiti sotto
+
+·         Boolean -\> Dispositivo Acceso o Spento (true, false)
+
+ 
+
+o   Periferica:
+
+§  Struttura:
+
+·         Stringa -\> Tipo Sensore o Attuatore
+
+·         Boolean -\> Sensore/periferica (true, false)
+
+·         Stringa -\> Codice periferica
+
+ 
+
+ 
+
+**Costrutti:**
+
+if then else, do-while, while,interval between, altri
 
 
+
+**Utilizzatori finali e ambito applicativo****:**
+
+** **
+
+** **
+
+**Problemi legati alla robotica:**
+
+ 
+
+ 
+
+ 
+
+* * * * *
+ 
 
 
 
