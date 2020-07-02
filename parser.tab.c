@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 3.6.1.  */
+/* A Bison parser, made by GNU Bison 3.6.3.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
@@ -49,7 +49,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.6.1"
+#define YYBISON_VERSION "3.6.3"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -1231,7 +1231,7 @@ yyreduce:
                                                    {       //COSTRUISCE LA LISTA DI PUNTATORI AI SIMBOLI CIOÈ AI DEVICE COLLEGATI AL DEVICE CHE SI STA INSERENDO
                                                            defSymRef((yyvsp[-4].str), (yyvsp[-1].sl), NULL);
                                                            newDev((yyvsp[-4].str),(yyvsp[-1].sl));
-                                                           printf("Operazione di inserimento completata con successo\n> "); 
+                                                           printf("Operazione di inserimento dispositivo e relativi collegamenti completata con successo\n> "); 
                           }
 #line 1237 "parser.tab.c"
     break;

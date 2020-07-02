@@ -60,7 +60,7 @@ exec: /* nothing */
     | INSERT STRING ARROW '[' argsListDevice ']'   {       //COSTRUISCE LA LISTA DI PUNTATORI AI SIMBOLI CIOÈ AI DEVICE COLLEGATI AL DEVICE CHE SI STA INSERENDO
                                                            defSymRef($2, $5, NULL);
                                                            newDev($2,$5);
-                                                           printf("Operazione di inserimento completata con successo\n> "); 
+                                                           printf("Operazione di inserimento dispositivo e relativi collegamenti completata con successo\n> "); 
                           }
     | INSERT STRING       { 
                                          defSymRef($2, NULL, NULL);

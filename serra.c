@@ -65,7 +65,7 @@ struct symbol *search(char* sym){
 
 
 
-struct symbol *searchDevice (char* sym){
+struct symbol *searchDevice (char* sym){   // RICERCA DEI SIMBOLI ESISTENTI DEI DEVICES
 
  /* puntatore alla cella corrispondente al simbolo cercato della tabella dei simboli dichiarata nell'header serra.h */
   struct symbol *symptr = &symtab[ symhash(sym) % DIMHASH ];
@@ -222,6 +222,8 @@ struct ast *newDev(struct symbol *ps, struct argsList *l)
   
   if(l!= NULL) { 
 
+          struct symbol *ptrSymDevices= searchDevice(nameSymbol);     //ptrSymDevices valore di ritorno
+         
           printf("%s connesso con ->   ", nameSymbol); 
           int countDeviceUnknown = 0;
 
@@ -232,8 +234,10 @@ struct ast *newDev(struct symbol *ps, struct argsList *l)
                  
                  nameSymbol = lpt->sym->name;
                  nameSymbol = symhashDev(nameSymbol);
+                
 
-                 if(! (searchDevice(nameSymbol))){
+                 if( ptrSymDevices && !(ptrSymDevices->dev)){   
+                 /* SE ptrSymDevices->dev NON È SETTATO, cioè se dev, puntatore ad un nodo struttura device è NULL, ALLORA BISOGNA CREARE ANCORA IL DEVICE, ANCHE SE IL SIMBOLO ESISTE GIÀ, COSA SCONTATA perchè creato in fase di parsing dalla regolaargsListDevice  */
                       printf("* ");
                       countDeviceUnknown++;
                  }
@@ -587,8 +591,9 @@ static char * calluser(struct userfunc *f)
 
   free(newval);
 
+  char *ptrReturnEval= eval(fn->func);
   /* Valutazione della funzione */
-  v= malloc(sizeof( eval(fn->func)));
+  v= malloc(sizeof(ptrReturnEval));
   sprintf(v, "%s", eval(fn->func) );
   
   
