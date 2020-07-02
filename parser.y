@@ -57,18 +57,19 @@ exec: /* nothing */
                                                             defSymRef($3, $5, $8); 
                                                             printf("Definito %s\n> ", $3->name); 
                                                         }
-    | INSERT STRING ARROW '[' argsListDevice ']'   {       //COSTRUISCE LA LISTA DI PUNTATORI AI SIMBOLI CIOÈ AI DEVICE COLLEGATI AL DEVICE CHE SI STA INSERENDO
+    | INSERT STRING ARROW '[' argsListDevice ']' EOL  {       
+    //COSTRUISCE LA LISTA DI PUNTATORI AI SIMBOLI CIOÈ AI DEVICE COLLEGATI AL DEVICE CHE SI STA INSERENDO
                                                            defSymRef($2, $5, NULL);
                                                            newDev($2,$5);
                                                            printf("Operazione di inserimento dispositivo e relativi collegamenti completata con successo\n> "); 
                           }
-    | INSERT STRING       { 
+    | INSERT STRING EOL    { 
                                          defSymRef($2, NULL, NULL);
                                          newDev($2,NULL);
                                          printf("Operazione di inserimento completata con successo\n> "); 
                           }
     | NAME           {  yyerrok; }
-    | exec error EOL {                 //GESTIONE DEGLI ERRORI
+    | exec error     {                 //GESTIONE DEGLI ERRORI
                         yyerrok;
                      }
 ;

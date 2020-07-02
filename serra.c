@@ -48,7 +48,7 @@ struct symbol *search(char* sym){
       symptr->value = 0;
       symptr->dev = NULL;
       symptr->func = NULL;
-      symptr->syms = NULL;
+      symptr->syms = NULL;  //LISTA DI SIMBOLI
       return symptr;
     }
 
@@ -97,7 +97,7 @@ struct ast *newast(int nodetype, struct ast *l, struct ast *r)
   struct ast *a = malloc(sizeof(struct ast));
   
   if(!a) {
-    yyerror("Spazio di memoria insufficiente");
+    yyerror("Spazio di memoria insufficiente\n");
     exit(0);
   }
   
@@ -114,7 +114,7 @@ struct ast *newnum(double d)
   struct numval *a = malloc(sizeof(struct numval));
   
   if(!a) {
-    yyerror("Spazio di memoria insufficiente");
+    yyerror("Spazio di memoria insufficiente\n");
     exit(0);
   }
   a->nodetype = 'K';
@@ -128,7 +128,7 @@ struct ast *newString(struct symbol *s)
   struct stringVal *a = malloc(sizeof(struct stringVal));
   
   if(!a) {
-    yyerror("Spazio di memoria insufficiente");
+    yyerror("Spazio di memoria insufficiente\n");
     exit(0);
   }
   a->nodetype = 'C';
@@ -143,7 +143,7 @@ struct ast *newcmp(int cmptype, struct ast *l, struct ast *r)
   struct ast *a = malloc(sizeof(struct ast));
   
   if(!a) {
-    yyerror("Spazio di memoria insufficiente");
+    yyerror("Spazio di memoria insufficiente\n");
     exit(0);
   }
   a->nodetype = '0' + cmptype;
@@ -158,7 +158,7 @@ struct ast *newfunc(int functype, struct ast *l)
   struct funcBuiltIn *a = malloc(sizeof(struct funcBuiltIn));
   
   if(!a) {
-    yyerror("Spazio di memoria insufficiente");
+    yyerror("Spazio di memoria insufficiente\n");
     exit(0);
   }
   a->nodetype = 'F';
@@ -174,7 +174,7 @@ struct ast *newfuncSystem(int functype)
   struct funcBuiltInSystem *a = malloc(sizeof(struct funcBuiltInSystem));
   
   if(!a) {
-    yyerror("Spazio di memoria insufficiente");
+    yyerror("Spazio di memoria insufficiente\n");
     exit(0);
   }
   a->nodetype = 'O';
@@ -194,7 +194,7 @@ struct ast *newDev(struct symbol *ps, struct argsList *l)
   struct argsList *lpt;
   
   if(!d) {
-    yyerror("Spazio di memoria insufficiente");
+    yyerror("Spazio di memoria insufficiente\n");
     exit(0);
   }
   
@@ -296,7 +296,7 @@ struct ast *newasgn(struct symbol *s, struct ast *v)
   struct symasgn *a = malloc(sizeof(struct symasgn));
   
   if(!a) {
-    yyerror("Spazio di memoria insufficiente");
+    yyerror("Spazio di memoria insufficiente\n");
     exit(0);
   }
   a->nodetype = '=';
@@ -311,7 +311,7 @@ struct ast *newContent(int nodetype, struct ast *cond, struct ast *tl, struct as
   struct content *a = malloc(sizeof(struct content));
   
   if(!a) {
-    yyerror("Spazio di memoria insufficiente");
+    yyerror("Spazio di memoria insufficiente\n");
     exit(0);
   }
   a->nodetype = nodetype;
@@ -327,7 +327,7 @@ struct argsList *newargsList(struct symbol *sym, struct argsList *next)
   struct argsList *sl = malloc(sizeof(struct argsList));
   
   if(!sl) {
-    yyerror("Spazio di memoria insufficiente");
+    yyerror("Spazio di memoria insufficiente\n");
     exit(0);
   }
   sl->sym = sym;
@@ -370,7 +370,7 @@ char* eval(struct ast *a)
   char * v;
 
   if(!a) {
-    yyerror("internal error, null eval");
+    yyerror("Errore interno, null eval");
     return 0;
   }
 
@@ -440,7 +440,7 @@ char* eval(struct ast *a)
   
  // DEVO GESTIRMELO COME NEI CASI SOPRA SCENDENDO L'ALBERO AST CON LA RICORSIONE DI EVAL
 
-  default: printf("internal error: bad node %c\n", a->nodetype);
+  default: printf("Errore interno: bad node %c\n", a->nodetype);
   }
   return v;
 }
@@ -638,7 +638,7 @@ void treefree(struct ast *a)
     if( ((struct content *)a)->el) free( ((struct content *)a)->el);
     break;
 
-  default: printf("internal error: free bad node %c\n", a->nodetype);
+  default: printf("Errore interno: free bad node %c\n", a->nodetype);
   
   }
   
@@ -651,7 +651,7 @@ void yyerror(char *s, ...)
   va_list ap;
   va_start(ap, s);
 
-  fprintf(stderr, "%d: error: ", yylineno);
+  fprintf(stderr, "%d: Errore: ", yylineno);
   vfprintf(stderr, s, ap);
   fprintf(stderr, "\n");
   va_end(ap);

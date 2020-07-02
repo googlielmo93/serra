@@ -1004,42 +1004,42 @@ YY_RULE_SETUP
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 79 "lexer.l"
+#line 80 "lexer.l"
 { yylval.s = search(yytext); return NAME; }            /* SERVE PER DEFINIRE I SIMBOLI PER I NOMI DELLE FUNZIONI */
 	YY_BREAK
 /* Numeri in virgola mobile */
 case 31:
-#line 83 "lexer.l"
+#line 84 "lexer.l"
 case 32:
 YY_RULE_SETUP
-#line 83 "lexer.l"
+#line 84 "lexer.l"
 { yylval.d = atof(yytext); return NUMBER; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 86 "lexer.l"
+#line 87 "lexer.l"
 /*IGNORA SPAZIO E TAB*/ 
 	YY_BREAK
 case 34:
 /* rule 34 can match eol */
 YY_RULE_SETUP
-#line 87 "lexer.l"
+#line 88 "lexer.l"
 printf("continue... > ");    /* IGNORA CONTINUAZIONE DI LINEA A CAPO*/
 	YY_BREAK
 case 35:
 /* rule 35 can match eol */
 YY_RULE_SETUP
-#line 88 "lexer.l"
+#line 89 "lexer.l"
 { return EOL; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 90 "lexer.l"
+#line 91 "lexer.l"
 { yyerror("Carattere Sconosciuto %c\n", *yytext); }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 93 "lexer.l"
+#line 94 "lexer.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
 #line 1046 "lex.yy.c"
@@ -2059,6 +2059,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 93 "lexer.l"
+#line 94 "lexer.l"
 
 

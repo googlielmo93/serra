@@ -75,6 +75,7 @@
                                 yylval.s = search(subbuff); 
                                 return STRING; 
 }
+
 [a-zA-Z][a-zA-Z0-9]*  { yylval.s = search(yytext); return NAME; }            /* SERVE PER DEFINIRE I SIMBOLI PER I NOMI DELLE FUNZIONI */
 
  /* Numeri in virgola mobile */
@@ -84,7 +85,7 @@
  
 [ \t]   /*IGNORA SPAZIO E TAB*/ 
 \\\n    printf("continue... > ");    /* IGNORA CONTINUAZIONE DI LINEA A CAPO*/
-"\n"    { return EOL; }
+\n    { return EOL; }
 
 .       { yyerror("Carattere Sconosciuto %c\n", *yytext); }
 
