@@ -24,7 +24,6 @@ unsigned char * symhashDev(char * nameSymbol){
   sprintf(devhash, "#%u", symhash(nameSymbol) % DIMHASH);
 
   return nameSymbol= strdup(strcat(nameSymbol, devhash));  
-  
   /* in questa maniera il nome del device è il simbolo che sarebbe già presente nella tabella per causa della stringa,
    * pertanto lo concateniamo a un codice hash */
 }
@@ -39,7 +38,7 @@ struct symbol *search(char* sym){
   while(--symcount >= 0) {
 
     if(symptr->name && !strcmp(symptr->name, sym)) {        
-                                                  /* se trova il simbolo cercato ritorna il puntatore alla cella contenente il simbolo cercato */
+ /* se trova il simbolo cercato ritorna il puntatore alla cella contenente il simbolo cercato */
         return symptr; 
     }
 
@@ -184,11 +183,8 @@ struct ast *newfuncSystem(int functype)
 }
 
 
-
-
-
-
-struct ast *newDev(struct symbol *ps, struct argsList *l)
+//struct ast *
+void newDev(struct symbol *ps, struct argsList *l)
 {
   struct device *d = malloc(sizeof(struct device));
   struct argsList *lpt;
@@ -203,7 +199,8 @@ struct ast *newDev(struct symbol *ps, struct argsList *l)
   
   nameSymbol= symhashDev(nameSymbol);
   
-  struct symbol *symbolDev= searchDevice(nameSymbol);
+  struct symbol *symbolDev= NULL; 
+  symbolDev = searchDevice(nameSymbol);
   
   if(symbolDev==NULL)    //SE IL DISPOSITIVO NON ESISTE
   {
@@ -213,14 +210,9 @@ struct ast *newDev(struct symbol *ps, struct argsList *l)
        d->s= sym;
        d->l = l;
        printf("Dispositivo inserito con successo con ID: %s \n", nameSymbol);
-    
-  }else{
-    printf("Dispositivo già Esistente con ID: %s\n", nameSymbol);
-  }
-  
-  
-  
-  if(l!= NULL) { 
+
+
+       if(l!= NULL) { 
 
           struct symbol *ptrSymDevices= searchDevice(nameSymbol);     //ptrSymDevices valore di ritorno
          
@@ -252,10 +244,14 @@ struct ast *newDev(struct symbol *ps, struct argsList *l)
 
           if(countDeviceUnknown > 0)    printf("Devices con (*) sconosciuti, inserire devices\n");
 
-   }
+       }
+    
+  }else{
+    printf("Dispositivo già Esistente con ID: %s\n", nameSymbol);
+  }
   
-  
-  return (struct ast *)d;
+
+  free(d);
 
 }
 
@@ -274,7 +270,6 @@ struct ast *newcall(struct symbol *s, struct ast *l)
   a->s = s;
   return (struct ast *)a;
 }
-
 
 
 struct ast *newref(struct symbol *s)
@@ -558,7 +553,6 @@ static char * calluser(struct userfunc *f)
   
   /* Valuta gli argomenti */
   for(i = 0; i < nargs; i++) {
-
     if(!args) {
       yyerror("Troppo pochi argomenti nella chiamata per %s", fn->name);
       free(oldval); 
@@ -610,8 +604,6 @@ static char * calluser(struct userfunc *f)
   free(oldval);
   return v;
 }
-
-
 
 
 

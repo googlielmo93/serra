@@ -42,8 +42,10 @@
 %%
 
 exec: /* nothing */
-    | exec stmt EOL {
-                      char *valEval= eval($2);
+| exec stmt EOL {                                              // QUI DA IL SEFMENTATION FAULT, TOLTO QUESTO FUNZIONA
+                      char *valEval;
+                      valEval = eval($2);
+
                       if(valEval != NULL){
                             printf("%s\n> ", valEval);
                       }else{
@@ -57,21 +59,11 @@ exec: /* nothing */
                                                             defSymRef($3, $5, $8); 
                                                             printf("Definito %s\n> ", $3->name); 
                                                         }
-    | INSERT STRING ARROW '[' argsListDevice ']' EOL  {       
-    //COSTRUISCE LA LISTA DI PUNTATORI AI SIMBOLI CIOÈ AI DEVICE COLLEGATI AL DEVICE CHE SI STA INSERENDO
-                                                           defSymRef($2, $5, NULL);
-                                                           newDev($2,$5);
-                                                           printf("Operazione di inserimento dispositivo e relativi collegamenti completata con successo\n> "); 
-                          }
-    | INSERT STRING EOL    { 
-                                         defSymRef($2, NULL, NULL);
-                                         newDev($2,NULL);
-                                         printf("Operazione di inserimento completata con successo\n> "); 
-                          }
-    | NAME           {  yyerrok; }
-    | exec error     {                 //GESTIONE DEGLI ERRORI
+
+    | exec error EOL { 
                         yyerrok;
                      }
+    | NAME           {  yyerrok; }
 ;
 
  
@@ -99,6 +91,17 @@ exp: exp CMP exp         { $$ = newcmp($2, $1, $3); }
    | FUNC explistStmt    { $$ = newfunc($1, $2); }
    | FUNCDEV explistStmt { 
                            $$ = newfunc($1, $2); 
+                          }
+    | INSERT STRING ARROW '[' argsListDevice ']'  {       
+    //COSTRUISCE LA LISTA DI PUNTATORI AI SIMBOLI CIOÈ AI DEVICE COLLEGATI AL DEVICE CHE SI STA INSERENDO
+                                                           defSymRef($2, $5, NULL);
+                                                           $$ = newDev($2,$5);
+                                                           printf("Operazione di inserimento dispositivo e relativi collegamenti completata con successo\n> "); 
+                          }
+    | INSERT STRING    { 
+                                         defSymRef($2, NULL, NULL);
+                                         $$ = newDev($2,NULL);
+                                         printf("Operazione di inserimento completata con successo\n> "); 
                           }
    | SYSTEM               { $$ = newfuncSystem($1); }
    | STRING               { $$ = newString($1); }
