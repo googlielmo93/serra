@@ -203,7 +203,7 @@ struct ast * newDev(struct symbol *ps, struct argsList *l)
   
   if(symbolDev==NULL)    //SE IL DISPOSITIVO NON ESISTE
   {
-       struct symbol *sym= search(nameSymbol);
+       struct symbol *sym= search(nameSymbol);            //INSERIMENTO DEL SIMBOLO DEL DISPOSITIVO CON #CODICEHASH AGGIUNTO
        d->nodetype = 'D';
        d->status = 0;  //LO PONGO CON STATO SPENTO DI DEFAULT
        d->s= sym;
