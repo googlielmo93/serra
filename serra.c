@@ -183,8 +183,7 @@ struct ast *newfuncSystem(int functype)
 }
 
 
-//struct ast *
-void newDev(struct symbol *ps, struct argsList *l)
+struct ast * newDev(struct symbol *ps, struct argsList *l)
 {
   struct device *d = malloc(sizeof(struct device));
   struct argsList *lpt;
@@ -221,12 +220,10 @@ void newDev(struct symbol *ps, struct argsList *l)
 
           printf("[");
           for( lpt=l; lpt; lpt = lpt->next){
-                 printf(" [%s] ", nameSymbol); 
-
-                 
                  nameSymbol = lpt->sym->name;
                  nameSymbol = symhashDev(nameSymbol);
                 
+                 printf(" [%s] ", nameSymbol); 
 
                  if( ptrSymDevices && !(ptrSymDevices->dev)){   
                  /* SE ptrSymDevices->dev NON È SETTATO, cioè se dev, puntatore ad un nodo struttura device è NULL, ALLORA BISOGNA CREARE ANCORA IL DEVICE, ANCHE SE IL SIMBOLO ESISTE GIÀ, COSA SCONTATA perchè creato in fase di parsing dalla regolaargsListDevice  */
@@ -250,8 +247,7 @@ void newDev(struct symbol *ps, struct argsList *l)
     printf("Dispositivo già Esistente con ID: %s\n", nameSymbol);
   }
   
-
-  free(d);
+  return (struct ast *)d;
 
 }
 

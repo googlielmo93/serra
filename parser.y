@@ -42,17 +42,16 @@
 %%
 
 exec: /* nothing */
-| exec stmt EOL {                                              // QUI DA IL SEFMENTATION FAULT, TOLTO QUESTO FUNZIONA
+| exec stmt EOL {                                              
                       char *valEval;
                       valEval = eval($2);
-
                       if(valEval != NULL){
                             printf("%s\n> ", valEval);
                       }else{
                             printf("\n> ");
                       }
 
-                      treefree($2);
+                //      treefree($2);
                     }
                          
     | exec CMD NAME '(' argsList ')' '=' listStmt EOL  {             // CREA UNA NUOVA FUNZIONE
@@ -96,7 +95,7 @@ exp: exp CMP exp         { $$ = newcmp($2, $1, $3); }
     //COSTRUISCE LA LISTA DI PUNTATORI AI SIMBOLI CIOÈ AI DEVICE COLLEGATI AL DEVICE CHE SI STA INSERENDO
                                                            defSymRef($2, $5, NULL);
                                                            $$ = newDev($2,$5);
-                                                           printf("Operazione di inserimento dispositivo e relativi collegamenti completata con successo\n> "); 
+                                                           printf("Operazione di inserimento dispositivo e relativi collegamenti completata con successo\n "); 
                           }
     | INSERT STRING    { 
                                          defSymRef($2, NULL, NULL);
