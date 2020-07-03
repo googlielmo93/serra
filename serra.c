@@ -225,9 +225,9 @@ struct ast * newDev(struct symbol *ps, struct argsList *l)
                 
                  printf(" [%s] ", nameSymbol); 
 
-                 if( ptrSymDevices && !(ptrSymDevices->dev)){   
+                 if( ptrSymDevices && (ptrSymDevices->dev)!=NULL){   
                  /* SE ptrSymDevices->dev NON È SETTATO, cioè se dev, puntatore ad un nodo struttura device è NULL, ALLORA BISOGNA CREARE ANCORA IL DEVICE, ANCHE SE IL SIMBOLO ESISTE GIÀ, COSA SCONTATA perchè creato in fase di parsing dalla regolaargsListDevice  */
-                      printf("* ");
+                      printf("* %s ", ptrSymDevices->dev);
                       countDeviceUnknown++;
                  }
 
