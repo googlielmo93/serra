@@ -30,7 +30,7 @@ unsigned char * symhashDev(char * nameSymbol){
 
 
 
-struct symbol *search(char* sym){
+struct symbol *search(char* sym, char* type){
  /* puntatore alla cella corrispondente al simbolo cercato della tabella dei simboli dichiarata nell'header serra.h */
   struct symbol *symptr = &symtab[ symhash(sym) % DIMHASH ];
   int symcount = DIMHASH;      /* viene passata la dimensione della tabella per cercare in tutte le celle di questa il simbolo cercato */
@@ -43,12 +43,18 @@ struct symbol *search(char* sym){
     }
 
     if(!symptr->name) {             /* NUOVO SIMBOLO */
-      symptr->name = strdup(sym);
-      symptr->value = 0;
-      symptr->dev = NULL;
-      symptr->func = NULL;
-      symptr->syms = NULL;  //LISTA DI SIMBOLI
-      return symptr;
+      if(!type){
+         symptr->name = strdup(sym);
+         symptr->value = 0;
+         symptr->dev = NULL;
+         symptr->func = NULL;
+         symptr->syms = NULL;  //LISTA DI SIMBOLI
+         return symptr;
+      }else{
+         if(!strcmp(type, "searchSym")){
+             return NULL;
+         }
+      }
     }
 
     if(++symptr >= symtab + DIMHASH) {      /* Ricomincia da capo se la cella corrente è l'ultima */
@@ -58,34 +64,6 @@ struct symbol *search(char* sym){
   
   yyerror("Errore: Tabella piena\n");
   abort(); 
-
-}
-
-
-
-
-struct symbol *searchDevice (char* sym){   // RICERCA DEI SIMBOLI ESISTENTI DEI DEVICES
-
- /* puntatore alla cella corrispondente al simbolo cercato della tabella dei simboli dichiarata nell'header serra.h */
-  struct symbol *symptr = &symtab[ symhash(sym) % DIMHASH ];
-
-  int symcount = DIMHASH;      /* viene passata la dimensione della tabella per cercare in tutte le celle di questa il simbolo cercato */
-  
-  while(--symcount >= 0) {
-
-    if(symptr->name && !strcmp(symptr->name, sym)) {         /* se trova il simbolo cercato ritorna il puntatore alla cella contenente il simbolo cercato */
-        return symptr; 
-    }
-
-    if(!symptr->name) {
-       return NULL;
-    }
-
-    if(++symptr >= symtab + DIMHASH) {      /* Ricomincia da capo se la cella corrente è l'ultima */
-        symptr = symtab;                       
-    }
-  }
-  return NULL;
 
 }
 
@@ -194,16 +172,17 @@ struct ast * newDev(struct symbol *ps, struct argsList *l)
   }
   
   char *nameSymbol;
+  char *devNameList;
   nameSymbol= ps->name;
   
   nameSymbol= symhashDev(nameSymbol);
   
   struct symbol *symbolDev= NULL; 
-  symbolDev = searchDevice(nameSymbol);
+  symbolDev = search(nameSymbol, "searchSym");
   
   if(symbolDev==NULL)    //SE IL DISPOSITIVO NON ESISTE
   {
-       struct symbol *sym= search(nameSymbol);            //INSERIMENTO DEL SIMBOLO DEL DISPOSITIVO CON #CODICEHASH AGGIUNTO
+       struct symbol *sym= search(nameSymbol, NULL);            //INSERIMENTO DEL SIMBOLO DEL DISPOSITIVO CON #CODICEHASH AGGIUNTO
        d->nodetype = 'D';
        d->status = 0;  //LO PONGO CON STATO SPENTO DI DEFAULT
        d->s= sym;
@@ -213,27 +192,38 @@ struct ast * newDev(struct symbol *ps, struct argsList *l)
 
        if(l!= NULL) { 
 
-          struct symbol *ptrSymDevices= searchDevice(nameSymbol);     //ptrSymDevices valore di ritorno
+          struct symbol *ptrSymDevices= search(nameSymbol, "searchSym");     //ptrSymDevices valore di ritorno
          
           printf("%s connesso con ->   ", nameSymbol); 
           int countDeviceUnknown = 0;
 
           printf("[");
+
           for( lpt=l; lpt; lpt = lpt->next){
-                 nameSymbol = lpt->sym->name;
-                 nameSymbol = symhashDev(nameSymbol);
+                 devNameList = lpt->sym->name;
+
+                 const char strchSearchChar= '#';
+                 if( !strchr(devNameList,strchSearchChar))
+                        devNameList = symhashDev(devNameList);
+
+                 if(strcmp(devNameList, nameSymbol)){     //SOLO SE DIVERSI
                 
-                 printf(" [%s] ", nameSymbol); 
+                     printf(" [%s] ", devNameList); 
 
-                 if( ptrSymDevices && (ptrSymDevices->dev)!=NULL){   
-                 /* SE ptrSymDevices->dev NON È SETTATO, cioè se dev, puntatore ad un nodo struttura device è NULL, ALLORA BISOGNA CREARE ANCORA IL DEVICE, ANCHE SE IL SIMBOLO ESISTE GIÀ, COSA SCONTATA perchè creato in fase di parsing dalla regolaargsListDevice  */
-                      printf("* %s ", ptrSymDevices->dev);
-                      countDeviceUnknown++;
+                     if( !search(devNameList, "searchSym")){   
+                      /* SE ptrSymDevices->dev NON È SETTATO, cioè se dev, puntatore ad un nodo struttura device è NULL, ALLORA BISOGNA CREARE ANCORA IL DEVICE, ANCHE SE IL SIMBOLO ESISTE GIÀ, COSA SCONTATA perchè creato in fase di parsing dalla regolaargsListDevice  */
+                           printf("* ", ptrSymDevices->dev);
+                            countDeviceUnknown++;
+                     }
+
+                 
+                 }else{ 
+                     printf(" itself ");
                  }
-
-
+                 
+                 
                  if(lpt->next != NULL) 
-                      printf("-");
+                          printf("-");
 
           }
           
@@ -455,7 +445,7 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
    case B_connect:
      printf("Ricerca del dispositivo %s in corso...\n", v);
      v=symhashDev(v);
-     symDev= searchDevice(v);
+     symDev= search(v, "searchSym");
 
      if(symDev){
         printf("Dispositivo Esistente\nRichiesta connessione...\n");     //INSERIRE ENUM CON CODICE DISPOSITIVO COME HTTP 200 AD ESEMPIO
@@ -470,7 +460,7 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
    case B_reconnect:
      printf("Ricerca del dispositivo %s in corso...\n", v);
      v=symhashDev(v);
-     symDev= searchDevice(v);
+     symDev= search(v, "searchSym");
 
      if(symDev){
         printf("Dispositivo Esistente\nRichiesta Riconnessione...\n");     //INSERIRE ENUM CON CODICE DISPOSITIVO COME HTTP 200 AD ESEMPIO
@@ -485,7 +475,7 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
    case B_status:
      v=symhashDev(v);
      printf("Richiesta status in corso per il device %s...\n", v);
-     symDev= searchDevice(v);
+     symDev= search(v, "searchSym");
 
      if(symDev){
         printf("Dispositivo %s:  Esistente-> %s\n", v, symDev-> name);
@@ -626,7 +616,7 @@ void treefree(struct ast *a)
     if( ((struct content *)a)->el) free( ((struct content *)a)->el);
     break;
 
-  default: printf("Errore interno: free bad node %c\n", a->nodetype);
+  default: printf("Errore interno: free bad node %c\n\n>", a->nodetype);
   
   }
   

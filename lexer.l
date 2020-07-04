@@ -72,11 +72,11 @@
                                 char subbuff[dimString-2];
                                 memmove( subbuff, &yytext[1], dimString-3 );
                                 subbuff[dimString-3] = '\0';
-                                yylval.s = search(subbuff); 
+                                yylval.s = search(subbuff, NULL); 
                                 return STRING; 
 }
 
-[a-zA-Z][a-zA-Z0-9]*  { yylval.s = search(yytext); return NAME; }            /* SERVE PER DEFINIRE I SIMBOLI PER I NOMI DELLE FUNZIONI */
+[a-zA-Z][a-zA-Z0-9]*  { yylval.s = search(yytext, NULL); return NAME; }            /* SERVE PER DEFINIRE I SIMBOLI PER I NOMI DELLE FUNZIONI */
 
  /* Numeri in virgola mobile */
 [0-9]+"."[0-9] |

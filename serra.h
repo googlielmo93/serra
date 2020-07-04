@@ -17,10 +17,7 @@ struct symbol {
 struct symbol symtab[DIMHASH];
 
 /* Dichiarazione Funzione Search() */
-struct symbol *search(char*);
-
-/* Ricerca di un Dispositivo */
-struct symbol *searchDevice (char* sym);
+struct symbol *search(char*, char*);
 
 
 struct numval {

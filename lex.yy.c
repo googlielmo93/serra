@@ -998,14 +998,14 @@ YY_RULE_SETUP
                                 char subbuff[dimString-2];
                                 memmove( subbuff, &yytext[1], dimString-3 );
                                 subbuff[dimString-3] = '\0';
-                                yylval.s = search(subbuff); 
+                                yylval.s = search(subbuff, NULL); 
                                 return STRING; 
 }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 80 "lexer.l"
-{ yylval.s = search(yytext); return NAME; }            /* SERVE PER DEFINIRE I SIMBOLI PER I NOMI DELLE FUNZIONI */
+{ yylval.s = search(yytext, NULL); return NAME; }            /* SERVE PER DEFINIRE I SIMBOLI PER I NOMI DELLE FUNZIONI */
 	YY_BREAK
 /* Numeri in virgola mobile */
 case 31:
