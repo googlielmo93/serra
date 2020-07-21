@@ -236,11 +236,14 @@ Elenco comandi base con esempi: {.western}
 \
  \
  - Accensione status dispositivo
-      - sintassi: switchOn "StringaNomeDevice"
-      - callbuiltin return struct ast \* pointerSymbol
-      - Esempio:
-           > newDevice "pippo" [INVIO]
-           > switchOn "pippo"  [INVIO]
+ 
+    \> sintassi: switchOn "StringaNomeDevice"
+
+    -   callbuiltin return struct ast \* pointerSymbol
+
+    -   Esempio: > newDevice "pippo" [INVIO]
+                 > switchOn "pippo"  [INVIO]
+    
            
  - Off status dispositivo
       - sintassi: switchOff "StringaNomeDevice"
