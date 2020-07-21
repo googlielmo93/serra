@@ -235,16 +235,33 @@ Elenco comandi base con esempi: {.western}
 
 \
  \
+ - Accensione status dispositivo
+      - sintassi: switchOn "StringaNomeDevice"
+      - callbuiltin return struct ast \* pointerSymbol
+      - Esempio:
+           > newDevice "pippo" [INVIO]
+           > switchOn "pippo"  [INVIO]
+           
+ - Off status dispositivo
+      - sintassi: switchOff "StringaNomeDevice"
+      - callbuiltin return struct ast \* pointerSymbol
+      - Esempio:
+           > newDevice "pippo" [INVIO]
+           > switchOff "pippo"  [INVIO]
 
-"switchOn"
-
-"switchOff"
-
+ - Accensione dello status del device per un certo intervallo di tempo:
+      - sintassi: switchOn "NomeDevice,Secondi"  ->note: è un unica stringa dove il primo parametro identicia il device da accendere il secondo per quanti         secondi deve stare acceso.E' un unica stringa che prima della virgola ha il nome del device e dopo la virgola un intero: ex: ("pippo,10", "paperino,20")..
+      - callbuiltin return struct ast \* pointerSymbol
+      - Esempio:
+           > newDevice "pippo" [INVIO]
+           > interva "pippo,10"  [INVIO]
+           
+           
 "diagnostic"
 
 "archive"
 
-"interval"
+
 
 \
  \
