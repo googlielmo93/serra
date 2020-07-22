@@ -72,13 +72,13 @@ o   Interi (32 Bit)
 
 o   Reali (64 Bit)
 
-o   Boolean (true, false)
+o   Boolean (true, false) (da levare?)
 
 ·         Tipi composti:
 
 o   Time (tipo prodotto cartesiano: identifica giorno mese orario nel
 formato giorno, mese, ora, anno: 9 Marzo 2012 11:00 : int char int int
-int)
+int) (da levare?)
 
 o   Mapping (array) / funzioni (condizionamento, annaffiamento,
 coltivazione, riscaldamento e altre da pensare): il programmatore deve
@@ -86,9 +86,9 @@ essere in grado di creare funzioni autonome per definire il proprio
 metodo di irrigazione regolarizzando il riscaldamento del terreno. In
 alternativa possono essere definite funzioni più basso livello per
 valutare per esempio la temperatura dell’area ecc. in base a ciò che
-l’utente vuole fare ecc.
+l’utente vuole fare ecc. (da levare o li metteremo?)
 
-o   Dispositivo:
+o   Dispositivo/Device:
 
 §  Struttura:
 
@@ -108,21 +108,36 @@ o   Periferica:
 
 ·         Stringa -\> Tipo Sensore o Attuatore
 
-·         Boolean -\> Sensore/periferica (true, false)
+·         Boolean -\> Sensore/periferica (true, false)->status
 
 ·         Stringa -\> Codice periferica
 
  
-
+(periferica e device alla fine dobbiamo lasciare solo device?)
  
 
 **Costrutti:**
 
 if then else, do-while, while,interval between, altri
 
+I costrutti if,else, then, do-while ecc sono ovviamente fondamentali nel linguaggio di programmazione. Tramite questi l'utente potrà avviare operazioni decisionali del tipo:
+- se i device sono accesi allora effettua operazioni di potatura
+- se il device è raggiungibile (ping) allora attiva il device
+E analoghe operazioni.
 
+**Idee di funzionamento:**
+Il sistema prevede l'utilizzo di una rete di device. L'utente tramite apposite funzioni previste dal linguaggio di programmazione avrà la possibilità di attivare tali device. Tramite i device una volta attivati l'utente potrà prevedere le operazioni analizzate sopra: giardinaggio, annaffia ecc. Sul device le operazioni previste sono le seguenti:
+1. Inserimento di un nuovo device nel sistema di giardinaggio
+2. Collegamento e sincronizzazione di un device con una rete di device
+3. Connettere il device: effettua una sorta di ping per verificare se effettivamente il device è attivo e puo essere attivato per le operazioni di giardinaggio
+4. Una volta inserito il device potrà essere attivato tramite una funzione di accensione
+5. O spento tramite una funzione di spegnimento
+6. Funzioni che restituiscono lo stato dei device: funzioni generiche che si occupano di restituire le caratteristiche dei device attivi nel sistema di giardinaggio
+7. Funzioni generali:
+- print: stampa di stringhe, numeri ecc.
 
 **Utilizzatori finali e ambito applicativo****:**
+Gli utilizzatori finali saranno utenti di giardinaggio. Il linguaggio deve essere facilemente fruibile anche a gente poco esperte in ambito di computer. Per tutti i sistemi dove sarà necessario avviare un operazione di giardinaggio automatico il sistema dovrà essere accessibile
 
 ** **
 
