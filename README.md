@@ -66,9 +66,9 @@ automazione:*
 
 ·         Tipi base del linguaggio:
 
-o   Stringhe
+o   Stringhe: STRING
 
-o   Interi (32 Bit)
+o   Interi (32 Bit): number
 
 o   Reali (64 Bit)
 
@@ -88,21 +88,8 @@ alternativa possono essere definite funzioni più basso livello per
 valutare per esempio la temperatura dell’area ecc. in base a ciò che
 l’utente vuole fare ecc. (da levare o li metteremo?)
 
-o   Dispositivo/Device:
-
-§  Struttura:
-
-·         Stringa -\> Nome Dispositivo
-
-·         Posizione (opzionale)-\> posizione intesa all’interno di una
-rete Lista di puntatori a Periferica -\> Contiene i riferimenti ai tipi
-sensore definiti sotto
-
-·         Boolean -\> Dispositivo Acceso o Spento (true, false)
-
  
-
-o   Periferica:
+o   Dispositivo/Device:
 
 §  Struttura:
 
@@ -135,6 +122,12 @@ Il sistema prevede l'utilizzo di una rete di device. L'utente tramite apposite f
 6. Funzioni che restituiscono lo stato dei device: funzioni generiche che si occupano di restituire le caratteristiche dei device attivi nel sistema di giardinaggio
 7. Funzioni generali:
 - print: stampa di stringhe, numeri ecc.
+- readFile: permetterà di eseguire il programma caricando le istruzioni definite su un file
+- clear: pulizia dello schermo
+8. Tramite le funzioni precedenti (da 1 a 7) potranno quindi essere generate le funzioni effettive di giardinaggio:
+- annaffia
+- coltiva
+- rasatura del prato 
 
 **Utilizzatori finali e ambito applicativo****:**
 Gli utilizzatori finali saranno utenti di giardinaggio. Il linguaggio deve essere facilemente fruibile anche a gente poco esperte in ambito di computer. Per tutti i sistemi dove sarà necessario avviare un operazione di giardinaggio automatico il sistema dovrà essere accessibile
@@ -144,13 +137,7 @@ Gli utilizzatori finali saranno utenti di giardinaggio. Il linguaggio deve esser
 ** **
 
 **Problemi legati alla robotica:**
-
- 
-
- 
-
- 
-
+L'ambito è apparentemente slegato dalla robotica ma può trovare anche sbocchi di utilizzo legati alla necessità di uso di robot che si occupino attivamente del giardinaggio.
 * * * * *
  
 
