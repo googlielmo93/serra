@@ -457,7 +457,7 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
      return (struct ast *) symDev;
      break;
 
-   case B_reconnect:
+   case B_reconnect: //questo è un commento
      printf("Ricerca del dispositivo %s in corso...\n", v);
      v=symhashDev(v);
      symDev= search(v, "searchSym");
