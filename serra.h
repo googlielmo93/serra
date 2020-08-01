@@ -8,13 +8,14 @@ struct symbol {
   char *value;
   struct ast *func;         /* stmt per le funzioni */
   struct ast *dev;         /* stmt per le funzioni */
-  struct argsList *syms;     /* Lista dei simboli */
+  struct argsList *syms;     /* Lista dei i */
 };
 
 
 /* Tabella di dimensione fissa */
 #define DIMHASH 10000
 struct symbol symtab[DIMHASH];
+
 
 /* Dichiarazione Funzione Search() */
 struct symbol *search(char*, char*);
@@ -87,7 +88,8 @@ enum builtFunc {
   B_diagnostic = 7, 
   B_archive = 8,
   B_interval = 9,
-  B_insertDevice = 10
+  B_insertDevice = 10,
+  B_readFile= 11
 };
 
 
@@ -109,8 +111,11 @@ struct ast {
 struct funcBuiltIn {    
   int nodetype;         /* tipo nodo F -> Funzioni Built-In*/
   struct ast *l;
+  struct ast *r;
   enum builtFunc functype;
 };
+
+
 
 
 /* Struttura Nodo per l'AST, per le funzioni predefinite */
@@ -138,6 +143,7 @@ struct content {
 
 
 /* Struttura Nodo per un riferimento ad un simbolo della tabella, per le funzioni utente */
+/* Anche usato per accedere alle variabili */
 struct symref {
   int nodetype;         /* tipo nodo N -> riferimento ad un simbolo*/
   struct symbol *s;
@@ -155,7 +161,7 @@ struct symasgn {
 /* FUNZIONI PER LA GENERAZIONE DI UN AST */
 struct ast *newast(int nodetype, struct ast *l, struct ast *r);
 struct ast *newcmp(int cmptype, struct ast *l, struct ast *r);
-struct ast *newfunc(int functype, struct ast *l);
+struct ast *newfunc(int functype, struct ast *l, struct ast *r);
 struct ast *newfuncSystem(int functype);
 struct ast *newcall(struct symbol *s, struct ast *l);
 struct ast *newref(struct symbol *s);
@@ -185,4 +191,10 @@ void yyerror(char *s, ...);
 
 extern int debug;
 void dumpast(struct ast *a, int level);
+
+/* Read_file*/
+static int index_file=0;
+
+extern FILE *yyin;
+
 

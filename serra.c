@@ -4,7 +4,11 @@
 #  include <string.h>
 #  include <math.h>
 #  include <ctype.h>
+#  include <time.h>
 #  include "serra.h"
+
+static FILE *temp;
+
 
 /* Tabella dei Simboli -> Hashing dei Simboli*/
 static unsigned symhash(char *sym) {
@@ -30,11 +34,14 @@ unsigned char * symhashDev(char * nameSymbol){
 
 
 
+/*Nel programma non posso avere simboli uguali di tipi diversi per come è stata costruita la tabella di lookup. Un po come matlab, ci puo anche stare.*/
 struct symbol *search(char* sym, char* type){
  /* puntatore alla cella corrispondente al simbolo cercato della tabella dei simboli dichiarata nell'header serra.h */
   struct symbol *symptr = &symtab[ symhash(sym) % DIMHASH ];
+    
   int symcount = DIMHASH;      /* viene passata la dimensione della tabella per cercare in tutte le celle di questa il simbolo cercato */
-
+    
+    //Con le prime due operazioni ti sei preso la entry corrispondente al tuo device di fatto, c'è bisogno di scorrerti la tabella dei simboli?
   while(--symcount >= 0) {
 
     if(symptr->name && !strcmp(symptr->name, sym)) {        
@@ -42,15 +49,17 @@ struct symbol *search(char* sym, char* type){
         return symptr; 
     }
 
-    if(!symptr->name) {             /* NUOVO SIMBOLO */
-      if(!type){
+    if(!symptr->name) {             /* NUOVO SIMBOLO */ //se è nullo
+      if(!type){    //se è nullo
          symptr->name = strdup(sym);
          symptr->value = 0;
          symptr->dev = NULL;
          symptr->func = NULL;
          symptr->syms = NULL;  //LISTA DI SIMBOLI
-         return symptr;
-      }else{
+          return symptr;
+      }
+      else{
+         //if(!strcmp(type, "searchSym")){
          if(!strcmp(type, "searchSym")){
              return NULL;
          }
@@ -94,8 +103,10 @@ struct ast *newnum(double d)
     yyerror("Spazio di memoria insufficiente\n");
     exit(0);
   }
+  
   a->nodetype = 'K';
   a->number = d;
+    
   return (struct ast *)a;
 }
 
@@ -130,7 +141,7 @@ struct ast *newcmp(int cmptype, struct ast *l, struct ast *r)
 }
 
 
-struct ast *newfunc(int functype, struct ast *l)
+struct ast *newfunc(int functype, struct ast *l, struct ast *r)
 {
   struct funcBuiltIn *a = malloc(sizeof(struct funcBuiltIn));
   
@@ -140,11 +151,12 @@ struct ast *newfunc(int functype, struct ast *l)
   }
   a->nodetype = 'F';
   a->l = l;
+  a->r = r;
   a->functype = functype;
   //printf("%d", functype);       //DEBUG
+    
   return (struct ast *)a;
 }
-
 
 struct ast *newfuncSystem(int functype)
 {
@@ -163,6 +175,8 @@ struct ast *newfuncSystem(int functype)
 
 struct ast * newDev(struct symbol *ps, struct argsList *l)
 {
+    
+ 
   struct device *d = malloc(sizeof(struct device));
   struct argsList *lpt;
   
@@ -173,23 +187,40 @@ struct ast * newDev(struct symbol *ps, struct argsList *l)
   
   char *nameSymbol;
   char *devNameList;
+        
   nameSymbol= ps->name;
-  
+
   nameSymbol= symhashDev(nameSymbol);
   
   struct symbol *symbolDev= NULL; 
   symbolDev = search(nameSymbol, "searchSym");
-  
+
+
   if(symbolDev==NULL)    //SE IL DISPOSITIVO NON ESISTE
   {
        struct symbol *sym= search(nameSymbol, NULL);            //INSERIMENTO DEL SIMBOLO DEL DISPOSITIVO CON #CODICEHASH AGGIUNTO
+       //printf("Ho inserito il simbolo con i seguenti valori:%s,%i\n",sym->name ,sym->value);
        d->nodetype = 'D';
        d->status = 0;  //LO PONGO CON STATO SPENTO DI DEFAULT
        d->s= sym;
        d->l = l;
+       //printf("il fratello è:%s", (((struct argsList *) (d->l))->sym)->name);
        printf("Dispositivo inserito con successo con ID: %s \n", nameSymbol);
 
-
+      
+      //------>PER TENERE TRACCIA: CONFRONTARSI: aggiunta<-----
+      //struct ast *dino = malloc(sizeof(struct ast));
+      struct ast *dino= (struct ast *)d;
+      (sym->dev)=dino;
+      //printf("Ho inserito il dino con i seguenti valori:%s,%i, %i\n",sym->name ,sym->value, sym->dev);
+     // printf("caratteristiche device: %c, %i\n", ((struct device *)(sym->dev))->nodetype, ((struct device *)(sym->dev))->status);
+      
+      //controllo da eliminare:
+       // struct device *dino=(struct device *)symbolDev->dev;
+      //struct device *w1=(struct device *)sym->dev;
+      //printf("%i\n", ((struct device *)(sym->dev))->status);
+      //--------------------------------fine aggiunta-------
+      
        if(l!= NULL) { 
 
           struct symbol *ptrSymDevices= search(nameSymbol, "searchSym");     //ptrSymDevices valore di ritorno
@@ -234,9 +265,10 @@ struct ast * newDev(struct symbol *ps, struct argsList *l)
        }
     
   }else{
+
     printf("Dispositivo già Esistente con ID: %s\n", nameSymbol);
   }
-  
+     
   return (struct ast *)d;
 
 }
@@ -252,8 +284,8 @@ struct ast *newcall(struct symbol *s, struct ast *l)
     exit(0);
   }
   a->nodetype = 'U';
-  a->l = l;
-  a->s = s;
+  a->l = l; //corpo dunzione
+  a->s = s; //nome funzione, finisce nella tabella dei simboli
   return (struct ast *)a;
 }
 
@@ -271,6 +303,8 @@ struct ast *newref(struct symbol *s)
   return (struct ast *)a;
 }
 
+
+/*Nelle assegnazioni le scelt3 che sono state fatte riguardano l'associare al value della tabella dei simboli il riferimento. Che saranno tutti interpretati come puntatori a char anche se in realtà non lo sono */
 
 struct ast *newasgn(struct symbol *s, struct ast *v)
 {
@@ -311,7 +345,10 @@ struct argsList *newargsList(struct symbol *sym, struct argsList *next)
     yyerror("Spazio di memoria insufficiente\n");
     exit(0);
   }
+  
   sl->sym = sym;
+  (sl->sym)->name=sym->name;
+    printf("ARGSLIST:%s\n", sym->name);
   sl->next = next;
   return sl;
 }
@@ -332,7 +369,7 @@ void argsListfree(struct argsList *sl)
 //Collega nella struct symbol passata come parametro i riferimenti alla argsList e all'AST che definisce
 void defSymRef(struct symbol *name, struct argsList *syms, struct ast *func)
 {
-  if(name->syms) argsListfree(name->syms);
+  if(name->syms) argsListfree(name->syms); 
   if(name->func) treefree(name->func);
   name->syms = syms;
   name->func = func;
@@ -346,86 +383,327 @@ struct ast * callbuiltinSystem(struct funcBuiltInSystem *);
 static char* calluser(struct userfunc *);
 
 
+//maggiore (eval(a->l), eval(a->r));
+int maggiore (char *sx, char *dx){
+    int x=0;
+    
+    //nel caso dei numeri puoi fare direttamente il confronto tra i char. Nel caso delle stringhe questo confronto già ha poco senso
+    
+    //nel caso dei device non ha senso. Facciamo che i confronti li effettua solo coi numeri altrimenti il programma dà un errore
+    
+    
+    if(atoi(dx)){
+        if (atoi(sx)){
+            printf("Sono numeri:%s,%s\n", sx,dx);
+            x = ((atoi(sx)>atoi(dx) )? 1 : 0);
+        }
+    }else{
+        printf("I valori passati come parametri non sono numeri\n");
+        
+         //come se fosse falso di default e quindi non entrerebbe nel corpo dell'if
+    }
+    return x;
+}
+    
+
+
 char* eval(struct ast *a)
 {
-  char * v;
+  char * v, *a1, *a2;
+    int h;
+  struct symbol *s;
+  struct ast *c;
 
   if(!a) {
     yyerror("Errore interno, null eval");
     return 0;
   }
-
   switch(a->nodetype) {
     /* Number constant */
-  case 'K': 
-            v= malloc(sizeof((((struct numval *)a)->number)));
-            sprintf(v, "%4.4g", ((struct numval *)a)->number);
-            break;
+
+      case 'K':
+                v= malloc(sizeof((((struct numval *)a)->number)));
+                sprintf(v, "%4.4g", ((struct numval *)a)->number);
+                //printf("NUMBER: %4.4g\n", ((struct numval *)a)->number);
+                s=search("ans", NULL);
+                s->value = v;
+                break;
+
+        /* String constant */
+     case 'C':  
+                v= strdup(((struct stringVal *)a)->s->name);
+                s=search("ans", NULL);
+                s->value = v; 
+                break;
+          
+          
+
+        /* In cordinata con case '='
+        Quindi 
+        name reference: serve ad accedere alle variabili che sono state dichiarate nel programma. Accende al campo value: è stato stabilito che:
+        - le exp che ritornano un tipo char * o un tipo int in value viene memorizzato quel valore 
+        - le exp che ritornano un tipo diverso in value viene memorizzato il putnatore 
+        - le exp che ritornano un null memorizzano un null
+        Esempi:
+        - exp come le funzioni che ritornano symbol in value memorizzano l'indirizzo di memoria. Per ex: var = newDevice "ciao" -> in var viene memorizzato l'indirizzo
+        - exp come le funzioni che ritornano il char * o l'int in value memorizzano il valore effettivo
+        Comportamento: Name prende un symbol nella tabella dei simboli. In symref in s metti un symbol e ci accedi al value. Nel value hai memorizzato i valori delle variabili. Tipo device.
+        */
+     case 'N':
+          //Per lo stesso motivo di case = controlli. Nel caso di funzioni void o funzioni che ritornano null a v viene assegnato NULL. Negli altri casi a v viene assegnato il puntatore al valore. 
+          //Quindi in var ci finisce value-> in value tramite un assegnamento precedente, se la variabile non è presente nella tabella dei simboli crea una varaibile NULL. Se non fai un
+          //assegamento precedente ci associa un valore a value. Tutte le funzioni embedded create non associano nulla a value. ------>In value ci vanno i valori assegnati<--------. Quindi è necessario a //prescindere un assegmaneto precedente.
+          
+              if((((struct symref *)a)->s->value))
+                  v=strdup((((struct symref *)a)->s->value));
+              else{
+                  v=malloc(sizeof(char *));
+                  v[0]='0';     //valore di default, se associo null rischio segmentazione
+              }
+              break;
+    
+
+        /* assignment: se l'espressione a dx ritorna un valore null non puo essere passato in input a strdup se no viene dato un segmentation fault. A parte questo dettaglio, l'assegnamento viene effettuato valutando l'espressione a destra e assegnadogli il risultato di quel valore a sx. Nel caso in cui l'espressione dx ritorna un ast a v sarà assegnato un tipo symbol mascherato come ast sarà ritornato un tipo symbol. Questo riguarda tutte le funzioni embedded: connect, switchOn ecc che ritornano tutte un tipo symbol. Significa far vedere l'alto livello all'utente. Il modo per risolverlo è far tornare valori diversi a queste funzioni: per ex name di symbol.*/
+          
+        /*Secondo punto: consideriamo come null anche le funzioni di tipo void come archive, cioè è previsto che le funzioni che non devono ritornare nulla ritornino un tipo null. Quindi eventualmetne anche nella definizione delle funzioni runtume è necessario venga aggiunta. Se non metti alcun tipo è normale che altrimenti andrà in segmentazione quando effettua l'eval. Ex: archive senza valore di ritorno*/
+     case '=': 
+              v=eval(((struct symasgn *)a)->v);
+              ((struct symasgn *)a)->s->value = v;
+              if(((struct symasgn *)a)->s->value){
+                v= strdup( ((struct symasgn *)a)->s->value); //assegno il valore a value. In realtà assegno il riferimento a value. Poi posso stampare.
+              }else{
+                  v=NULL;
+              }
+              break;
+          
+
+
+  /*  comparisons: da rivedere le precedenze: causa reduce*/
+      case '1': 
+              a1=eval(a->r);
+              a2=eval(a->l);
+              h= maggiore(a1,a2); break;    
+          /*a1=eval(a->l); a2=eval(a->r); h= (maggiore (a1, a2)); printf("FINE:%i\n",h); break; */   //>
+      case '2': v = strdup((eval(a->l) < eval(a->r))? 1 : 0); break;      //<
+      case '3': v = strdup((eval(a->l) != eval(a->r))? 1 : 0); break;     //==
+      case '4': v = strdup((eval(a->l) == eval(a->r))? 1 : 0); break;
+      case '5': v = strdup((eval(a->l) >= eval(a->r))? 1 : 0); break;
+      case '6': v = strdup((eval(a->l) <= eval(a->r))? 1 : 0); break;
   
-  /* String constant */
-  case 'C': v= strdup(((struct stringVal *)a)->s->name); break;
-
-    /* name reference */
-  case 'N': v = strdup((((struct symref *)a)->s->value)); break;
-
-    /* assignment */
-  case '=': v = strdup((((struct symasgn *)a)->s->value = eval(((struct symasgn *)a)->v))); break;
-
-
-
-    /* comparisons *
-  case '1': v = strdup((eval(a->l) > eval(a->r))? 1 : 0); break;
-  case '2': v = strdup((eval(a->l) < eval(a->r))? 1 : 0); break;
-  case '3': v = strdup((eval(a->l) != eval(a->r))? 1 : 0); break;
-  case '4': v = strdup((eval(a->l) == eval(a->r))? 1 : 0); break;
-  case '5': v = strdup((eval(a->l) >= eval(a->r))? 1 : 0); break;
-  case '6': v = strdup((eval(a->l) <= eval(a->r))? 1 : 0); break;
-  */
 
 
   /* control content */
   /* null if/else/do expressions allowed in the grammar, so check for them */
-  case 'I': 
-    if( eval( ((struct content *)a)->cond) != 0) {
-      if( ((struct content *)a)->tl) {
-    v = eval( ((struct content *)a)->tl);
-      } else
-    v = 0;        /* a default value */
-    } else {
-      if( ((struct content *)a)->el) {
-        v = eval(((struct content *)a)->el);
-      } else
-    v = 0;        /* a default value */
-    }
-  break;
-  case 'W':
-    v = 0;        /* a default value */
-    
-    if( ((struct content *)a)->tl) {
-      while( eval(((struct content *)a)->cond) != 0)
-                 v = eval(((struct content *)a)->tl);
-    }
-    
-  break;        /* last value is value */
+      case 'I': 
+          /*((struct symbol *)v)->name: aggiunto 2 righe: 422 e 423*/
+          /*prima solo: if( eval( ((struct content *)a)->cond) != 0) { */
+           if( eval( ((struct content *)a)->cond)){
+              //printf("if valido\n");
+              if( ((struct content *)a)->tl) {//se non è nullo allora c'è un corpo e lo eseguo
+                    //printf("Then valido\n");
+                    v = eval( ((struct content *)a)->tl);
+              } else
+                    v = 0;        /* a default value */
+            } else {
+                if( ((struct content *)a)->el) {
+                    v = eval(((struct content *)a)->el);
+                } else
+                    v = 0;        /* a default value */
+            }
+            break;
+     case 'W':
+        v = 0;        /* a default value */
 
-  case 'L': eval(a->l); v = eval(a->r); break;
+        if( ((struct content *)a)->tl) {
+          while( eval(((struct content *)a)->cond) != 0)
+                     v = eval(((struct content *)a)->tl);
+        }
 
-  case 'F': v = callbuiltin((struct funcBuiltIn *)a); break;
-  
-  case 'O': v = callbuiltinSystem((struct funcBuiltInSystem *)a); break;
+        break;        /* last value is value */
 
-  case 'U': v = calluser((struct userfunc *)a); break;
-  
-  case 'D': break;
-  
-  
- // DEVO GESTIRMELO COME NEI CASI SOPRA SCENDENDO L'ALBERO AST CON LA RICORSIONE DI EVAL
+     case 'L': eval(a->l); v = eval(a->r); break;
 
-  default: printf("Errore interno: bad node %c\n", a->nodetype);
+     case 'F': v = callbuiltin((struct funcBuiltIn *)a);/*AGGIUNTA: return ((struct symbol *)v)->name;*/ break;
+
+     case 'O': v = callbuiltinSystem((struct funcBuiltInSystem *)a); break;
+
+     case 'U': v = calluser((struct userfunc *)a); break;
+
+     case 'D': break;
+          
+
+
+     // DEVO GESTIRMELO COME NEI CASI SOPRA SCENDENDO L'ALBERO AST CON LA RICORSIONE DI EVAL
+
+      default: printf("Errore interno: bad node %c\n", a->nodetype);
   }
   return v;
 }
 
+
+//switchOn
+/*FUNZIONANTE
+void switchOn(char *v){
+    printf("4\n");
+    //struct symbol *symDev= (struct symbol *) connect(v);
+    char *nameSymbol= symhashDev(v);
+    struct symbol *sym=  search(nameSymbol, "searchSym");
+    printf("symbol:%s, %i, %i\n",sym->name, sym->value, ((struct device *) (sym->dev))->status);
+    printf("5\n");
+
+    if(sym){
+        //struct device *d= symDev->dev;
+        //d->status=1;
+        printf("6\n");
+        ((struct device *) (sym->dev))->status =1;
+        printf("7\n");
+        printf("La connect è andata a buon fine e il dispositivo è stato acceso\n\n");
+    }else{
+        printf("Dispositivo inesistente\n\n");
+        //return NULL;
+    }
+    //return (struct ast *)symDev;
+        
+}
+*/
+
+//connect
+struct ast *connect(char *v){
+    
+     printf("Ricerca del dispositivo %s in corso...\n", v);
+     char *vino=symhashDev(v);
+     struct symbol *symDev= search(vino, "searchSym");
+
+     if(symDev){
+        printf("Dispositivo Esistente\nRichiesta connessione...\n");     //INSERIRE ENUM CON CODICE DISPOSITIVO COME HTTP 200 AD ESEMPIO
+     }else{
+        printf("Dispositivo %s: Non Esistente\n", vino);  
+        return NULL;
+     }
+
+     return (struct ast *) symDev;
+    
+}
+
+//Accensione del dispositivo:
+//Descrizione: L'accensione del dispositivo è stata intesa come la variazione dello status dell'ogetto del device. L'ogetto device è memorizzato all'interno la tabella dei simboli nel campo Dev (è stato aggiunto una cosa piccola dentro search, chiedere conferma a vincenzo). Quindi bisogna effettuare una connect (si puo richiamare dentro il case di B_connect, confrontarsi) che restituisce il simbolo. Se la connessione è andata a buon fine si va a modificare il campo Dev.
+struct ast *switchOn(char *v){
+    
+    printf("\t\t\tVerifica in corso della connessione del dispositivo....\n");
+    struct symbol *sym= (struct symbol *) connect(v);
+
+    if(sym){
+        ((struct device *) (sym->dev))->status =1;
+        printf("\t\t\tLa connect è andata a buon fine e il dispositivo è stato acceso\n\n");
+    }else{
+        printf("\t\t\tDispositivo inesistente e quindi non acceso\n\n");
+        return NULL;
+    }
+    return (struct ast *)sym;
+        
+}
+
+struct ast *switchOff(char *v){
+    
+    printf("\t\t\tVerifica in corso della connessione del dispositivo....\n");
+    struct symbol *sym= (struct symbol *) connect(v);
+
+    if(sym){
+        ((struct device *) (sym->dev))->status =0;
+        printf("\t\t\tIl dispositivo è spento\n\n");
+    }else{
+        printf("\t\t\tDispositivo inesistente\n\n");
+        return NULL;
+    }
+    return (struct ast *)sym;
+        
+}
+
+
+/*Funzione interval che dato un tipo ast in input va a verificare l'esistenza di quel device. Nel caso in cui il device esiste cioè è presente nalla tabella dei simboli va a controllare tramite un parametro passato come parametro, cioè l'istante di tempo, quanti secondi devono passare per mantenere attivo il device. Passato l'intervallo di tempo lo pone a 0. Quindi teoricamente questa funzione pretende in input due parametri rappresenti da una stringa che identifica il periodo di tempo in cui deve stare attivo e il device da attivare. Come parametro prende il device da attivare per quell'intervalo di tempo*/
+/*interval "device, 10 minuti"-> formato: device, 10 minuti*/
+
+struct ast *interval (int r, char *v){
+    
+    //GESTIONE STRINGHE: da 560 a riga 575
+    //Estrazione dei paraemtri: devicePippo e 10
+    printf("\nAVVIO OPERAZIONE:\n");
+
+        //Operazioni:
+    char *temp=malloc((strlen(v)+1)*sizeof(char));
+    temp=strcpy(temp, v);
+
+    struct symbol *h= switchOn(v);
+    if(h){
+        sleep(r); //time.h, 1000 è 1 secondo, aspettiamo min secondi
+        switchOff(temp);
+    }
+    
+    return h;
+
+    //return NULL: Se lo metto va in segmentazione, credo per motivi legati al parlellismo tra processi, lasciando il warning risolviamo il problema
+    
+}
+
+
+/*Archivia file: dovrebbe essere creato un tipo Device primitivo per applicare la ricorsione. Non avendolo previsto sono costretto a far funzioni che prevedono il passaggio solo di una stringa e non del tipo device. Posso eventualmente passare un intero come id. E dall'id ricavarlo, ma potrei avere piu tipi id uguali. Applico con il passaggio di una stringa. Eventualmente possiamo semplicemente prevedere che il file sia sempre lo stesso e quindi non viene passato come parametro. Credo sarebbe la cosa migliore. Al momento lo prevedo cosi e commento la parte in cui passo il file come parametro. Passo come parametro solo il device da scrivere.*/
+
+void cancella_device (struct symbol *syms){
+    
+    /*Passo come parametro il simbolo che voglio cancellare. Cancellare vuol dire cancellare il riferimento. Eliminare un elemento dalla tabella dei simboli vuol dire lasciare un buco. Dato che la tabella dei simboli ha una dimensione prefissata. Ponendolo a null non riesco piu ad accedervi. Rimane un campo null nella tabella dei simboli che eventualmente puo essere riutilizzato in futuro per scrivere. Non è gestito il caso in cui la tabella dei simboli è piena. Al momento è cosi. Per com'è stato fatto il search la ricerca viene fatta in base al name */
+
+    (syms->name)=NULL;
+    
+    
+}
+    
+
+/*Il file è presupposto sia sempre lo stesso e quindi non c'è bisogno di passarlo come parametro*/
+void scrivi_file (struct symbol *syms){
+        
+    struct device *d=(struct device *) (syms->dev);
+    //printf("symbol:%s, %i, %i\n",syms->name, syms->value, d->status);
+    
+    FILE *fd;
+    char *x=(syms->name);
+
+                /* apre il file in scrittura */
+    fd=fopen("Device.txt", "a");
+    if( fd==NULL ) {
+            perror("Errore in apertura del file");
+            exit(1);
+    }
+
+
+          /* scrive il numero */
+    fprintf(fd, "%s\n", x);
+
+
+                /* chiude il file */
+    fclose(fd);
+
+
+}
+
+
+
+void archivia (char *v){
+    
+    char *nameSymbol= symhashDev(v);
+    struct symbol *symo=  search(nameSymbol, "searchSym");
+    
+    //struct argsList *n= (symo->syms);
+    
+    //printf("E' collegato a:%s\n",(n->sym)->name); 
+    //printf("E' collegato a:%s\n",(n->sym)->name);
+    
+    if(symo){
+        scrivi_file(symo);
+        cancella_device (symo);
+    }
+    
+
+}
 
 
 
@@ -433,67 +711,134 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
 {
 
   enum builtFunc functype = f->functype;
-  char *v = strdup(eval(f->l));
+  //char *v = strdup(eval(f->l));
+  char *v;
+  double r;
+  FILE *fconfig, *let;
+    
   struct symbol *symDev;
 
- switch(functype) {
+  switch(functype) {
    case B_print:
-     printf("display = ");
-     return (struct ast *) v;
-     break;
+         v=strdup(eval(f->l));
+         //printf("display = ");
+         if(atoi(v) || isalpha(v[0]))
+             printf("%s\n", v);
+          else
+              printf("ERROR: Il parametro passato alla funzione printf non è nè un numero nè una stringa");
+         return (struct ast *) v;
+         break;
 
    case B_connect:
-     printf("Ricerca del dispositivo %s in corso...\n", v);
-     v=symhashDev(v);
-     symDev= search(v, "searchSym");
+         v=strdup(eval(f->l));
+         printf("Ricerca del dispositivo %s in corso...\n", v);
+         v=symhashDev(v);
+         symDev= search(v, "searchSym");
+         //printf("Sto ritornando symDev:%s\n", symDev->name);
 
-     if(symDev){
-        printf("Dispositivo Esistente\nRichiesta connessione...\n");     //INSERIRE ENUM CON CODICE DISPOSITIVO COME HTTP 200 AD ESEMPIO
-     }else{
-        printf("Dispositivo %s: Non Esistente\n", v);  
-        return NULL;
-     }
+         if(symDev){
+            printf("Dispositivo Esistente\nRichiesta connessione...\n");     //INSERIRE ENUM CON CODICE DISPOSITIVO COME HTTP 200 AD ESEMPIO
+         }else{
+            printf("Dispositivo %s: Non Esistente\n", v);  
+            return NULL;
+         }
+         //printf("Sto ritornando v:%s\n",  symDev->name);
 
-     return (struct ast *) symDev;
-     break;
+         return (struct ast *) symDev;
+         break;
 
-   case B_reconnect: //questo è un commento
-     printf("Ricerca del dispositivo %s in corso...\n", v);
-     v=symhashDev(v);
-     symDev= search(v, "searchSym");
+   case B_reconnect:
+         v=strdup(eval(f->l));
+         printf("Ricerca del dispositivo %s in corso...\n", v);
+         v=symhashDev(v);
+         symDev= search(v, "searchSym");
 
-     if(symDev){
-        printf("Dispositivo Esistente\nRichiesta Riconnessione...\n");     //INSERIRE ENUM CON CODICE DISPOSITIVO COME HTTP 200 AD ESEMPIO
-     }else{
-        printf("Dispositivo %s: Non Esistente\n", v);  
-        return NULL;
-     }
-     //statusDevice(symDev);
-     return (struct ast *) symDev;
-     break;
+         if(symDev){
+            printf("Dispositivo Esistente\nRichiesta Riconnessione...\n");     //INSERIRE ENUM CON CODICE DISPOSITIVO COME HTTP 200 AD ESEMPIO
+         }else{
+            printf("Dispositivo %s: Non Esistente\n", v);  
+            return NULL;
+         }
+         //statusDevice(symDev);
+         return (struct ast *) symDev;
+         break;
 
    case B_status:
-     v=symhashDev(v);
-     printf("Richiesta status in corso per il device %s...\n", v);
-     symDev= search(v, "searchSym");
+         v=strdup(eval(f->l));
+         v=symhashDev(v);
+         printf("Richiesta status in corso per il device %s...\n", v);
+         symDev= search(v, "searchSym");
 
-     if(symDev){
-        printf("Dispositivo %s:  Esistente-> %s\n", v, symDev-> name);
-     }else{
-        printf("Dispositivo %s:  Non Esistente\n", v);  
-        return NULL;
-     }
-     //statusDevice(symDev);
-     return (struct ast *) symDev;
-     break;
+         if(symDev){
+            printf("Dispositivo %s:  Esistente-> %s\n", v, symDev-> name);
+         }else{
+            printf("Dispositivo %s:  Non Esistente\n", v);  
+            return NULL;
+         }
+         //statusDevice(symDev);
+         return (struct ast *) symDev;
+         break;
+         
+     case B_switchOn:
+         v=strdup(eval(f->l));
+         symDev=switchOn(v);
+         //Controllo se tutto è andato bene, altrimenti col valore di return di switchOn facciamo prima
+         //symDev= search(v, "searchSym");
+         //printf ("Il dispositivo è stato aggiornato con stato: %i.",((struct device *) (symDev->dev))->status); 
+         return (struct ast *) symDev;
+         
+     case B_switchOff:
+         v=strdup(eval(f->l));
+         symDev= switchOff(v);
+         //symDev= search(v, "searchSym");
+         //int status=((struct device *) (symDev->dev))->status;
+         //printf ("Il dispositivo è stato aggiornato con stato: %i.\n",status); 
+         return (struct ast *) symDev;
+          
+      case B_interval:
+         v=strdup(eval(f->l));
+         r=atoi(strdup(eval(f->r)));
+         printf("numero:%g, stringa:%s\n", r, v);
+         symDev= interval(r, v);
+         return (struct ast *) symDev;
+         //break;
+          
+      case B_archive:
+          v=strdup(eval(f->l));
+          archivia(v);
+          return NULL; //void è la funzione
+          break;
+          
+      case  B_readFile:
+            v=strdup(eval(f->l));
+          
+            let=fopen(v, "r"); //esistenza file
+          
+            if (let!=NULL){
+                //Inserisci il terminatore del file: token TERM
+                fconfig=fopen(v, "a");
+                fprintf(fconfig,"terminatore\n");
+                fclose(fconfig); 
+                
+                //Effettua la fase di lettura del file:
+                index_file=1;
+                yyin=let;  
+                
+            }else{
+                printf("file inesistente\n");
+            }
+                 
+            break;
+
 
    default:
-     yyerror("Funzione built-in sconosciuta %d\n", functype);
-     return 0;
+         yyerror("Funzione built-in sconosciuta %d\n", functype);
+         return 0;
  }
 }
 
 
+/*FUNZIONI EMBEDDED*/
 struct ast * callbuiltinSystem(struct funcBuiltInSystem *f)
 {
   enum builtFuncSystem functype = f->functype;
@@ -520,6 +865,7 @@ static char * calluser(struct userfunc *f)
   int nargs;
   int i;
 
+  //da noi sarà sempre inesistente, non scrivi mai dentro func nulla.
   if(!fn->func) {
     yyerror("Chiamata ad una funzione insesistente", fn->name);
     return 0;
@@ -639,8 +985,11 @@ void yyerror(char *s, ...)
 
 int main()
 {
-  printf("> "); 
-  return yyparse();
+    printf(">");
+    search("ans", NULL);
+
+    return yyparse();
+
 }
 
 
@@ -704,5 +1053,3 @@ void dumpast(struct ast *a, int level)
     return;
   }
 }
-
-

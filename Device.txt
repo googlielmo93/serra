@@ -1,0 +1,6 @@
+device_Ovest#8100
+device_Nord#5304
+device_Sud#8477
+device_Ovest#8100
+pippo#5694
+pluto#3842
