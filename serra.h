@@ -8,7 +8,7 @@ struct symbol {
   char *value;
   struct ast *func;         /* stmt per le funzioni */
   struct ast *dev;         /* stmt per le funzioni */
-  struct argsList *syms;     /* Lista dei i */
+  struct argsList *syms;     /* Lista dei simboli */
 };
 
 
