@@ -54,7 +54,7 @@ exec:  /* nothing */
                             if(!strcmp(valEval,"D")){  
                                  printf("Operazione di inserimento dispositivo completata con successo\n\n> "); 
                             }else{       
-                                 //printf("%s\n> ", valEval);
+                                 printf("%s\n> ", valEval);
                                  printf("\n> ");
                             }
                       }else{
