@@ -125,7 +125,7 @@ exp: exp CMP exp         {  $$ = newcmp($2, $1, $3); }
    | STRING               { $$ = newString($1); }
    | NAME                 { printf("ciao\n"); $$ = newref($1); }          //riferimenti a variabili
    | NAME '=' exp         { $$ = newasgn($1, $3); }     //per gli assegmaneti
-   | NAME '(' explistStmt ')' { printf("ciao\n"); $$ = newcall($1, $3);}  //per le funzioni: Nodo U
+   | NAME '(' explistStmt ')' { $$ = newcall($1, $3);}  //per le funzioni: Nodo U
    | INTERVAL explistStmt '-' explistStmt { //bug: interval-pi-> si confonde con name, ma è pieno di sti bug (si devono correggere?)
             $$=newfunc($1, $2, $4);
 
