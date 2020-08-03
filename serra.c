@@ -817,7 +817,7 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
             if (let!=NULL){
                 //Inserisci il terminatore del file: token TERM
                 fconfig=fopen(v, "a");
-                fprintf(fconfig,"terminatore\n");
+                fprintf(fconfig,"match\n");
                 fclose(fconfig); 
                 
                 //Effettua la fase di lettura del file:
