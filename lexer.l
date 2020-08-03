@@ -44,7 +44,7 @@
 "clear" { yylval.func = B_clear; return SYSTEM; }
 
 "readFile" { printf("Sto leggendo il file\n"); yylval.func= B_readFile; return FUNC; }
-"terminatore" { return TERM; }
+"match" { return TERM; }
 
 
  /* Funzioni per il tipo device */
