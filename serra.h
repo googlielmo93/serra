@@ -90,12 +90,12 @@ enum builtFunc {
   B_interval = 9,
   B_insertDevice = 10,
   B_readFile = 11,
-  B_help = 12
 };
 
 
 enum builtFuncSystem {            
-    B_clear = 1
+    B_clear = 1,
+    B_help = 2
 };
 
 

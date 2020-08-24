@@ -387,19 +387,19 @@ static const flex_int16_t yy_accept[145] =
        41,   41,   47,   45,   42,   44,   45,    6,    7,    1,
         4,    2,    8,   41,    5,   12,    3,   11,   39,   39,
         9,   45,   10,   39,   39,   39,   39,   39,   39,   39,
-       39,   39,   39,   39,   39,   39,    0,   38,    0,   36,
+       39,   39,   39,   39,   39,   39,    0,   38,    0,   34,
        41,    0,    0,   16,   13,   14,   15,   39,   39,   43,
        39,   39,   39,   39,   21,   39,   39,   17,   39,   39,
-       39,   39,   39,   39,   39,   39,   39,   40,   37,   39,
+       39,   39,   39,   39,   39,   39,   39,   40,   35,   39,
        39,   39,   39,   39,   39,   39,   39,   39,   39,   39,
        39,   39,   39,   39,   39,   39,   39,   39,   39,   19,
-       26,   39,   39,   39,   39,   39,   39,   39,   39,   18,
+       37,   39,   39,   39,   39,   39,   39,   39,   39,   18,
 
-       39,   39,   23,   39,   39,   39,   25,   39,   22,   39,
+       39,   39,   36,   39,   39,   39,   24,   39,   22,   39,
        39,   39,   39,   20,   39,   39,   39,   39,   39,   39,
-       39,   29,   39,   33,   27,   39,   39,   39,   39,   39,
-       39,   39,   34,   39,   24,   39,   39,   30,   39,   35,
-       28,   31,   32,    0
+       39,   27,   39,   31,   25,   39,   39,   39,   39,   39,
+       39,   39,   32,   39,   23,   39,   39,   28,   39,   33,
+       26,   29,   30,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -962,92 +962,92 @@ YY_RULE_SETUP
 /* Funzioni incorporate */
 case 22:
 YY_RULE_SETUP
-#line 41 "lexer.l"
+#line 42 "lexer.l"
 { yylval.func = B_print; return FUNC; }
 	YY_BREAK
-/* Funzioni di sistema */
 case 23:
 YY_RULE_SETUP
-#line 45 "lexer.l"
-{ yylval.func = B_clear; return SYSTEM; }
+#line 43 "lexer.l"
+{ printf("Sto leggendo il file\n"); yylval.func= B_readFile; return FUNC; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 47 "lexer.l"
-{ printf("Sto leggendo il file\n"); yylval.func= B_readFile; return FUNC; }
-	YY_BREAK
-case 25:
-YY_RULE_SETUP
-#line 48 "lexer.l"
+#line 44 "lexer.l"
 { return TERM; }
 	YY_BREAK
 /* Funzioni per il tipo device */
+case 25:
+YY_RULE_SETUP
+#line 48 "lexer.l"
+{ yylval.func = B_connect; return FUNCDEV; }
+	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 52 "lexer.l"
-{ yylval.func = B_help; return FUNCDEV; }
+#line 49 "lexer.l"
+{ yylval.func = B_reconnect; return FUNCDEV; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 53 "lexer.l"
-{ yylval.func = B_connect; return FUNCDEV; }
+#line 50 "lexer.l"
+{ yylval.func = B_status; return FUNCDEV; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 54 "lexer.l"
-{ yylval.func = B_reconnect; return FUNCDEV; }
+#line 51 "lexer.l"
+{ yylval.func = B_switchOn; return FUNCDEV; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 55 "lexer.l"
-{ yylval.func = B_status; return FUNCDEV; }
+#line 52 "lexer.l"
+{ yylval.func = B_switchOff; return FUNCDEV; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 56 "lexer.l"
-{ yylval.func = B_switchOn; return FUNCDEV; }
+#line 53 "lexer.l"
+{ yylval.func = B_diagnostic; return FUNCDEV; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 57 "lexer.l"
-{ yylval.func = B_switchOff; return FUNCDEV; }
+#line 54 "lexer.l"
+{ yylval.func = B_archive; return FUNCDEV; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 58 "lexer.l"
-{ yylval.func = B_diagnostic; return FUNCDEV; }
+#line 55 "lexer.l"
+{ yylval.func = B_interval; return INTERVAL; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 59 "lexer.l"
-{ yylval.func = B_archive; return FUNCDEV; }
-	YY_BREAK
-case 34:
-YY_RULE_SETUP
-#line 60 "lexer.l"
-{ yylval.func = B_interval; return INTERVAL; }
-	YY_BREAK
-case 35:
-YY_RULE_SETUP
-#line 64 "lexer.l"
+#line 56 "lexer.l"
 { yylval.func = B_insertDevice; return INSERT; }
 	YY_BREAK
 /* ARROW */
+case 34:
+YY_RULE_SETUP
+#line 59 "lexer.l"
+{ return ARROW;}
+	YY_BREAK
+case 35:
+YY_RULE_SETUP
+#line 62 "lexer.l"
+{ printf("User Mode:\t"); }
+	YY_BREAK
+/* Funzioni senza parametri, funzionalitù di sistema */
 case 36:
 YY_RULE_SETUP
-#line 68 "lexer.l"
-{ return ARROW;}
+#line 66 "lexer.l"
+{ yylval.func = B_clear; return SYSTEM; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 71 "lexer.l"
-{ printf("User Mode:\t"); }
+#line 67 "lexer.l"
+{ yylval.func = B_help; return SYSTEM; }
 	YY_BREAK
 /* Stringhe alfanumeriche (quindi contiene anche i caratteri?). Ho cambiato il riconoscimento delle stringhe prima era_["][a-zA-Z][,]?[a-zA-Z0-9]*["] */
 case 38:
 /* rule 38 can match eol */
 YY_RULE_SETUP
-#line 75 "lexer.l"
+#line 73 "lexer.l"
 {            
                                 int dimString= strlen(yytext)+1;
                                 char subbuff[dimString-2];
@@ -1060,43 +1060,43 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 87 "lexer.l"
+#line 85 "lexer.l"
 { yylval.s = search(yytext, NULL); return NAME; }            /* SERVE PER DEFINIRE I SIMBOLI PER I NOMI DELLE FUNZIONI */
 	YY_BREAK
 /* Numeri in virgola mobile */
 /*Prende la prima cifra intera dopo la virgola. E i numeri interi li prende solo fino a 10, da discutere*/
 case 40:
-#line 92 "lexer.l"
+#line 90 "lexer.l"
 case 41:
 YY_RULE_SETUP
-#line 92 "lexer.l"
+#line 90 "lexer.l"
 { yylval.d = atof(yytext); return NUMBER; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 96 "lexer.l"
+#line 94 "lexer.l"
 /*IGNORA SPAZIO E TAB*/ 
 	YY_BREAK
 case 43:
 /* rule 43 can match eol */
 YY_RULE_SETUP
-#line 97 "lexer.l"
+#line 95 "lexer.l"
 printf("continue... > ");    /* IGNORA CONTINUAZIONE DI LINEA A CAPO*/
 	YY_BREAK
 case 44:
 /* rule 44 can match eol */
 YY_RULE_SETUP
-#line 98 "lexer.l"
+#line 96 "lexer.l"
 { return EOL; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 100 "lexer.l"
+#line 98 "lexer.l"
 { yyerror("Carattere Sconosciuto %c\n", *yytext); }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 103 "lexer.l"
+#line 101 "lexer.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
 #line 1103 "lex.yy.c"
@@ -2116,6 +2116,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 103 "lexer.l"
+#line 101 "lexer.l"
 
 

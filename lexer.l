@@ -36,19 +36,14 @@
 "while" { return WHILE; }
 "do"    { return DO; }
 
+
  /* Funzioni incorporate */
 "print" { yylval.func = B_print; return FUNC; }
-
-
- /* Funzioni di sistema */
-"clear" { yylval.func = B_clear; return SYSTEM; }
-
 "readFile" { printf("Sto leggendo il file\n"); yylval.func= B_readFile; return FUNC; }
 "match" { return TERM; }
 
 
  /* Funzioni per il tipo device */
-"help" { yylval.func = B_help; return FUNCDEV; }
 "connect" { yylval.func = B_connect; return FUNCDEV; }
 "reconnect" { yylval.func = B_reconnect; return FUNCDEV; }
 "status" { yylval.func = B_status; return FUNCDEV; }
@@ -57,17 +52,20 @@
 "diagnostic" { yylval.func = B_diagnostic; return FUNCDEV; }
 "archive" { yylval.func = B_archive; return FUNCDEV; }
 "interval" { yylval.func = B_interval; return INTERVAL; }
-
-
-
 "newDevice" { yylval.func = B_insertDevice; return INSERT; }
-
 
  /* ARROW */
 "->" { return ARROW;}
 
 
 "CMD" { printf("User Mode:\t"); }
+
+
+ /* Funzioni senza parametri, funzionalitù di sistema */
+"clear" { yylval.func = B_clear; return SYSTEM; }
+"help" { yylval.func = B_help; return SYSTEM; }
+
+
 
  /* Stringhe alfanumeriche (quindi contiene anche i caratteri?). Ho cambiato il riconoscimento delle stringhe prima era_["][a-zA-Z][,]?[a-zA-Z0-9]*["] */
 

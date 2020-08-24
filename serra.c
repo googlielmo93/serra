@@ -737,12 +737,6 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
          return (struct ast *) v;
          break;
 
-   case B_help:
-         v=strdup(eval(f->l));
-         helpMessage();
-         return NULL;
-         break;
-
    case B_connect:
          v=strdup(eval(f->l));
          printf("Ricerca del dispositivo %s in corso...\n", v);
@@ -852,6 +846,7 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
 }
 
 
+
 /*FUNZIONI EMBEDDED*/
 struct ast * callbuiltinSystem(struct funcBuiltInSystem *f)
 {
@@ -860,6 +855,10 @@ struct ast * callbuiltinSystem(struct funcBuiltInSystem *f)
  switch(functype) {
    case B_clear:
      system("clear");
+     return 0;
+     break;
+   case B_help:
+     helpMessage();
      return 0;
      break;
    default:
