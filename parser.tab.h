@@ -71,7 +71,8 @@ extern int yydebug;
     ELSE = 272,                    /* ELSE  */
     WHILE = 273,                   /* WHILE  */
     DO = 274,                      /* DO  */
-    CMD = 275                      /* CMD  */
+    CMD = 275,                     /* CMD  */
+    HELP = 276                     /* HELP  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -89,7 +90,7 @@ union YYSTYPE
   struct argsList *sl;
   int  func;              /* Specifica quale funzione built-in deve essere eseguita */
 
-#line 93 "parser.tab.h"
+#line 94 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

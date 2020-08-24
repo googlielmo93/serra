@@ -31,7 +31,7 @@
 %token <str> ARROW
 %token EOL
 %token <str> TERM
-%token IF THEN ELSE WHILE DO CMD
+%token IF THEN ELSE WHILE DO CMD HELP
 
 
 //Identifica la precedenza: la regola CMP è quella che ha la piu alta precedenza. Se hai piu alberi esegue quello in cui la regola CMP viene eseguita a una precedenza > : %nonassoc <func> CMP
@@ -123,7 +123,7 @@ exp: exp CMP exp         {  $$ = newcmp($2, $1, $3); }
                           }
    | SYSTEM               { $$ = newfuncSystem($1); }
    | STRING               { $$ = newString($1); }
-   | NAME                 { printf("ciao\n"); $$ = newref($1); }          //riferimenti a variabili
+   | NAME                 { $$ = newref($1); }          //riferimenti a variabili
    | NAME '=' exp         { $$ = newasgn($1, $3); }     //per gli assegmaneti
    | NAME '(' explistStmt ')' { $$ = newcall($1, $3);}  //per le funzioni: Nodo U
    | INTERVAL explistStmt '-' explistStmt { //bug: interval-pi-> si confonde con name, ma è pieno di sti bug (si devono correggere?)

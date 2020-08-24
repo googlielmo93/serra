@@ -48,6 +48,7 @@
 
 
  /* Funzioni per il tipo device */
+"help" { yylval.func = B_help; return FUNCDEV; }
 "connect" { yylval.func = B_connect; return FUNCDEV; }
 "reconnect" { yylval.func = B_reconnect; return FUNCDEV; }
 "status" { yylval.func = B_status; return FUNCDEV; }

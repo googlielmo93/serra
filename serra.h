@@ -89,7 +89,8 @@ enum builtFunc {
   B_archive = 8,
   B_interval = 9,
   B_insertDevice = 10,
-  B_readFile= 11
+  B_readFile = 11,
+  B_help = 12
 };
 
 

@@ -707,6 +707,14 @@ void archivia (char *v){
 
 
 
+void helpMessage(){
+
+printf("** Manuale di istruzione **\n\n\nElenco comandi base con esempi:\n-------------------------------\n\n-   Inserimento Stringa:\n\n> 'Nuova Stringa' [INVIO]\n\n-   newString \return struct ast \* pointerSimbolo\n\n-   Esempio: 'Sono una Stringa'\n\n\n-   Stampa Stringa:\n\n> print “Stringa” [ INVIO ]\n\n-   callbuiltin return char \* pointerSymbol\n\n-   Esempio: print “Ciao sono una Stringa” [ INVIO ]\n\n-   N.B. Anche l’inserimento dell’istruzione sopra produce la stampa.\n\n\n-   Inserimento Sempice Nuovo Dispositivo:\n\n> newDev “Nome Device” [INVIO]\n\n-   newDev return struct ast \* pointerDevice\n\n-   Esempio: newDevice “dev1” [ INVIO ]\n\n\n-   Inserimento con Collegamenti a Dispositivi di Nuovo Dispositivo:\n\n> newDev “Nome Device” → [ “Nome Device 1”, “Nome Device 2”, …] [ INVIO ]\n\n-   newDev return struct ast \* pointerDevice\n\n-   Esempio: newDevice “dev1” → [“dev2”, “dev3”, “dev4”] [ INVIO ]\n\n\n-   Richiesta Status con Dispositivo:\n\n> status “Nome Device” [ INVIO ]\n\n-   callbuiltin return struct ast \* pointerSymbol\n\n-   Esempio: status “dev1” [ INVIO ]\n\n\n-   Richiesta Connessione con Dispositivo:\n\n> connect “Nome Device” [ INVIO ]\n\n-   callbuiltin return struct ast \* pointerSymbol\n\n-   Esempio: connect “dev1” [ INVIO ]\n\n\n-   Richiesta Riconnessione con Dispositivo:\n\n> reconnect “Nome Device” [ INVIO ]\n\n-   callbuiltin return struct ast \* pointerSymbol\n\n-   Esempio: reconnect “dev1” [ INVIO ]\n\n\n-   Richiesta Riconnessione con Dispositivo:\n\n> reconnect “Nome Device” [ INVIO ]\n\n-   callbuiltin return struct ast \* pointerSymbol\n\n-   Esempio: reconnect “dev1” [ INVIO ]\n\n\n- Accensione status dispositivo\n\n> sintassi: switchOn ”StringaNomeDevice”\n\n-   callbuiltin return struct ast \* pointerSymbol\n\n-   Esempio: > switchOn ”dev1”  [INVIO]\n\n\n- Off status dispositivo\n\n> sintassi: switchOff ”StringaNomeDevice”\n\n-   callbuiltin return struct ast \* pointerSymbol\n\n-   Esempio: Esempio: > switchOff ”dev1”  [INVIO]\n\n\n- Accensione dello status del device per un certo intervallo di tempo:\n\n> sintassi: interval ”NomeDevice”-Secondi  ->note: è un unica stringa dove il primo parametro identicia il device da accendere il \secondo per quanti secondi deve stare acceso.E' un unica stringa che prima della virgola ha il nome del device e dopo la virgola un \intero: ex: (”pippo,10”, ”paperino,20”).\n\n-   callbuiltin return struct ast \* pointerSymbol\n\n-   Esempio: > interval ”pippo”-10  [INVIO] ”diagnostic”\n\n\n- Archiviazione e cancellazione di un device:\n\n> sintassi: archive ”NomeDevice”\n\n-   void\n\n-   Esempio: > archive ”pippo”  [INVIO]\n\n\nDefinizioni variabili e assegnazioni variabili:\n\- +-come matlab\n \n\if-then;\n\n");
+
+}
+
+
+
 struct ast * callbuiltin(struct funcBuiltIn *f)
 {
 
@@ -727,6 +735,12 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
           else
               printf("ERROR: Il parametro passato alla funzione printf non è nè un numero nè una stringa");
          return (struct ast *) v;
+         break;
+
+   case B_help:
+         v=strdup(eval(f->l));
+         helpMessage();
+         return NULL;
          break;
 
    case B_connect:
@@ -1002,9 +1016,9 @@ void welcomeMessage(){
     printf("          +-+-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+ \n");
     printf("\n");
     printf("\n");
-    printf("     +-+-+-+-+-+ +-+-+-+-+ +-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ \n");
-    printf("     |W|r|i|t|e| |H|e|l|p| |i|f| |y|o|u| |n|e|e|d| |i|t|.|  \n");                          
-    printf("     +-+-+-+-+-+ +-+-+-+-+ +-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ \n");
+    printf(" +-+-+-+-+-+ +-+-+-+-+ +-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+ +-+-+\n");
+    printf(" | |W|r|i|t|e| |h|e|l|p| |l|i||s|t| |i|f| |y|o|u| |n|e|e|d| |i|t|. |\n");                          
+    printf(" +-+-+-+-+-+ +-+-+-+-+ +-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+ +-+-+\n");
     printf("\n");
 }
 
