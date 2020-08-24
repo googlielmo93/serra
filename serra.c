@@ -983,8 +983,8 @@ void yyerror(char *s, ...)
 
 
 
-int main()
-{
+
+void welcomeMessage(){
     printf("\n");
     printf("                +-+-+-+-+-+-+-+ +-+-+ +-+-+-+\n");
     printf("                |W|e|l|c|o|m|e| |t|o| |t|h|e|  \n");                          
@@ -1002,10 +1002,17 @@ int main()
     printf("          +-+-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+ \n");
     printf("\n");
     printf("\n");
-    printf("+-+-+-+-+-+ +-+-+-+-+ +-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+-+-+ \n");
-    printf("|W|r|i|t|e| |H|e|l|p| |i|f| |y|o|u| |n|e|e|d| |h|e|l|p|.|  \n");                          
-    printf("+-+-+-+-+-+ +-+-+-+-+ +-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+-+-+ \n");
+    printf("     +-+-+-+-+-+ +-+-+-+-+ +-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ \n");
+    printf("     |W|r|i|t|e| |H|e|l|p| |i|f| |y|o|u| |n|e|e|d| |i|t|.|  \n");                          
+    printf("     +-+-+-+-+-+ +-+-+-+-+ +-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ \n");
     printf("\n");
+}
+
+
+
+int main()
+{
+    welcomeMessage();
     printf(">");
     search("ans", NULL);
 
