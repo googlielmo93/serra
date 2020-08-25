@@ -709,8 +709,120 @@ void archivia (char *v){
 
 void helpMessage(){
 
-printf("** Manuale di istruzione **\n\n\nElenco comandi base con esempi:\n-------------------------------\n\n-   Inserimento Stringa:\n\n> 'Nuova Stringa' [INVIO]\n\n-   newString \return struct ast \* pointerSimbolo\n\n-   Esempio: 'Sono una Stringa'\n\n\n-   Stampa Stringa:\n\n> print “Stringa” [ INVIO ]\n\n-   callbuiltin return char \* pointerSymbol\n\n-   Esempio: print “Ciao sono una Stringa” [ INVIO ]\n\n-   N.B. Anche l’inserimento dell’istruzione sopra produce la stampa.\n\n\n-   Inserimento Sempice Nuovo Dispositivo:\n\n> newDev “Nome Device” [INVIO]\n\n-   newDev return struct ast \* pointerDevice\n\n-   Esempio: newDevice “dev1” [ INVIO ]\n\n\n-   Inserimento con Collegamenti a Dispositivi di Nuovo Dispositivo:\n\n> newDev “Nome Device” → [ “Nome Device 1”, “Nome Device 2”, …] [ INVIO ]\n\n-   newDev return struct ast \* pointerDevice\n\n-   Esempio: newDevice “dev1” → [“dev2”, “dev3”, “dev4”] [ INVIO ]\n\n\n-   Richiesta Status con Dispositivo:\n\n> status “Nome Device” [ INVIO ]\n\n-   callbuiltin return struct ast \* pointerSymbol\n\n-   Esempio: status “dev1” [ INVIO ]\n\n\n-   Richiesta Connessione con Dispositivo:\n\n> connect “Nome Device” [ INVIO ]\n\n-   callbuiltin return struct ast \* pointerSymbol\n\n-   Esempio: connect “dev1” [ INVIO ]\n\n\n-   Richiesta Riconnessione con Dispositivo:\n\n> reconnect “Nome Device” [ INVIO ]\n\n-   callbuiltin return struct ast \* pointerSymbol\n\n-   Esempio: reconnect “dev1” [ INVIO ]\n\n\n-   Richiesta Riconnessione con Dispositivo:\n\n> reconnect “Nome Device” [ INVIO ]\n\n-   callbuiltin return struct ast \* pointerSymbol\n\n-   Esempio: reconnect “dev1” [ INVIO ]\n\n\n- Accensione status dispositivo\n\n> sintassi: switchOn ”StringaNomeDevice”\n\n-   callbuiltin return struct ast \* pointerSymbol\n\n-   Esempio: > switchOn ”dev1”  [INVIO]\n\n\n- Off status dispositivo\n\n> sintassi: switchOff ”StringaNomeDevice”\n\n-   callbuiltin return struct ast \* pointerSymbol\n\n-   Esempio: Esempio: > switchOff ”dev1”  [INVIO]\n\n\n- Accensione dello status del device per un certo intervallo di tempo:\n\n> sintassi: interval ”NomeDevice”-Secondi  ->note: è un unica stringa dove il primo parametro identicia il device da accendere il \secondo per quanti secondi deve stare acceso.E' un unica stringa che prima della virgola ha il nome del device e dopo la virgola un \intero: ex: (”pippo,10”, ”paperino,20”).\n\n-   callbuiltin return struct ast \* pointerSymbol\n\n-   Esempio: > interval ”pippo”-10  [INVIO] ”diagnostic”\n\n\n- Archiviazione e cancellazione di un device:\n\n> sintassi: archive ”NomeDevice”\n\n-   void\n\n-   Esempio: > archive ”pippo”  [INVIO]\n\n\nDefinizioni variabili e assegnazioni variabili:\n\- +-come matlab\n \n\if-then;\n\n");
+printf("                                 +-+-+-+-+-+ +-+-+-+-+ +-+-+-+-+ +-+-+\n");
+printf("                                 |                                   |\n");  
+printf("                                 |    ** Manuale di istruzione **    |\n");          
+printf("                                 |                                   |\n");  
+printf("                                 +-+-+-+-+-+ +-+-+-+-+ +-+-+-+-+ +-+-+\n\n\n");
 
+printf("                ---------------------------------------------------------------------\n");
+printf("                                   Elenco comandi base con esempi :\n");
+printf("                ---------------------------------------------------------------------\n");
+
+
+printf(" ---------------------------\n");
+printf(" |  Inserimento Stringa :  |\n");                          
+printf(" ---------------------------\n");
+printf("-> \"Testo Stringa\" [INVIO]\n\n");
+printf("-   newString return struct ast * pointerSimbolo\n\n");
+printf("-   Esempio: 'Sono una Stringa'\n\n\n");
+
+
+printf(" ----------------------\n");
+printf(" |  Stampa Stringa :  |\n");                          
+printf(" ----------------------\n");
+printf("->  sintassi: print “Stringa” [ INVIO ]\n\n");
+printf("-   callbuiltin return char * pointerSymbol\n\n");
+printf("-   Note: Anche l’inserimento dell’istruzione sopra produce la stampa.\n\n");
+printf("-   Esempio: print “Ciao sono una Stringa” [ INVIO ]\n\n\n");
+
+
+printf(" ----------------------------------------------\n");
+printf(" |  Inserimento Semplice Nuovo Dispositivo :  |\n");                          
+printf(" ----------------------------------------------\n");
+printf("->  sintassi: newDev “Nome Device” [INVIO]\n\n");
+printf("-   newDev return struct ast * pointerDevice\n\n");
+printf("-   Esempio: newDevice “dev1” [ INVIO ]\n\n\n");
+
+
+printf(" ---------------------------------------------------------------------------\n");
+printf(" |  Inserimento Nuovo Dispositivo con Collegamenti ad altri Dispositivi :  |\n");                          
+printf(" ---------------------------------------------------------------------------\n");
+printf("->  sintassi: newDev “Nome Device” → [ “Nome Device 1”, “Nome Device 2”, …] [ INVIO ]\n\n");
+printf("-   newDev return struct ast * pointerDevice\n\n");
+printf("-   Esempio: newDevice “dev1” → [“dev2”, “dev3”, “dev4”] [ INVIO ]\n\n\n");
+
+
+printf(" ----------------------------------------\n");
+printf(" |  Richiesta Status con Dispositivo :  |\n");                          
+printf(" ----------------------------------------\n");
+printf("->  sintassi: status “Nome Device” [ INVIO ]\n\n");
+printf("-   callbuiltin return struct ast * pointerSymbol\n\n");
+printf("-   Esempio: status “dev1” [ INVIO ]\n\n\n");
+
+
+printf(" ---------------------------------------------\n");
+printf(" |  Richiesta Connessione con Dispositivo :  |\n");                          
+printf(" ---------------------------------------------\n");
+printf("->  sintassi: connect “Nome Device” [ INVIO ]\n\n");
+printf("-   callbuiltin return struct ast \* pointerSymbol\n\n");
+printf("-   Esempio: connect “dev1” [ INVIO ]\n\n\n");
+
+
+printf(" -----------------------------------------------\n");
+printf(" |  Richiesta Riconnessione con Dispositivo :  |\n");                          
+printf(" -----------------------------------------------\n");
+printf("->  sintassi: reconnect “Nome Device” [ INVIO ]\n\n");
+printf("-   callbuiltin return struct ast \* pointerSymbol\n\n");
+printf("-   Esempio: reconnect “dev1” [ INVIO ]\n\n\n");
+
+
+printf(" -------------------------------------\n");
+printf(" |  Accensione status dispositivo :  |\n");                          
+printf(" -------------------------------------\n");
+printf("->  sintassi: switchOn ”StringaNomeDevice”\n\n");
+printf("-   callbuiltin return struct ast \* pointerSymbol\n\n");
+printf("-   Esempio: switchOn ”dev1”  [INVIO]\n\n\n");
+
+
+printf(" ------------------------------\n");
+printf(" |  Off status dispositivo :  |\n");                          
+printf(" ------------------------------\n");
+printf("->  sintassi: switchOff ”StringaNomeDevice”\n\n");
+printf("-   callbuiltin return struct ast \* pointerSymbol\n\n-   Esempio: Esempio:");
+printf("->  switchOff ”dev1”  [INVIO]\n\n\n");
+
+
+printf(" ---------------------------------------------------------------------------\n");
+printf(" |  Accensione dello status del device per un certo intervallo di tempo :  |\n");                          
+printf(" ---------------------------------------------------------------------------\n");
+printf("->  sintassi: interval ”NomeDevice”-Secondi");
+printf("-   callbuiltin return struct ast * pointerSymbol\n\n");
+printf("-   Note: E' un unica stringa dove il primo parametro identifica il device da accendere,\n");
+printf("    il secondo definisce per quanti secondi deve stare acceso.");
+printf("-   Esempio: (”pippo,10”, ”paperino,20”)  [INVIO]\n\n");
+printf("-   Altro Esempio:  interval ”pippo”-10  [INVIO]\n\n\n");
+
+
+printf(" ------------------------------------\n");
+printf(" |  Diagnostica del dispostitivo :  |\n");                          
+printf(" ------------------------------------\n");
+printf("-   ”diagnostic” dev1\n\n\n");
+
+
+printf(" ----------------------------------\n");
+printf(" |  Archiviazione di un device :  |\n");                          
+printf(" ----------------------------------\n");
+printf("->  sintassi: archive ”NomeDevice”\n\n");
+printf("-   null\n\n");
+printf("-   Esempio: > archive ”pippo”  [INVIO]\n\n\n");
+
+
+printf(" ------------------------------------------------------\n");
+printf(" |  Definizioni variabili e assegnazioni variabili :  |\n");                          
+printf(" ------------------------------------------------------\n");
+printf("->  sintassi: +-\n\n");
+printf("-   Note: Come in Matlab\n\n");
 }
 
 

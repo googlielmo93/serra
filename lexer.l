@@ -55,7 +55,7 @@
 "interval" { yylval.func = B_interval; return INTERVAL; }
 "newDevice" { yylval.func = B_insertDevice; return INSERT; }
 
- /* ARROW */
+ /* ARROW necessario per le associazioni tra dispositivi*/
 "->" { return ARROW;}
 
 
@@ -68,7 +68,7 @@
 "help" { yylval.func = B_help; return SYSTEM; }
 
 
- /* Stringhe alfanumeriche (quindi contiene anche i caratteri?). Ho cambiato il riconoscimento delle stringhe prima era_["][a-zA-Z][,]?[a-zA-Z0-9]*["] */
+ /* Stringhe alfanumeriche.*/
 \"([^\\\"]|\\.)*\" {            
                                 int dimString= strlen(yytext)+1;
                                 char subbuff[dimString-2];
@@ -83,7 +83,7 @@
 [a-zA-Z][a-zA-Z0-9]*  { yylval.s = search(yytext, NULL); return NAME; }            
 
  /* Numeri in virgola mobile */
- /*Prende la prima cifra intera dopo la virgola. E i numeri interi li prende solo fino a 10, da discutere*/
+ /* Prende la prima cifra intera dopo la virgola. */
 [0-9]+"."[0-9] |
 "."?[0-9]? { yylval.d = atof(yytext); return NUMBER; }
 
