@@ -709,11 +709,11 @@ void archivia (char *v){
 
 void helpMessage(){
 
-printf("                                 +-+-+-+-+-+ +-+-+-+-+ +-+-+-+-+ +-+-+\n");
+printf("                                 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n");
 printf("                                 |                                   |\n");  
 printf("                                 |    ** Manuale di istruzione **    |\n");          
 printf("                                 |                                   |\n");  
-printf("                                 +-+-+-+-+-+ +-+-+-+-+ +-+-+-+-+ +-+-+\n\n\n");
+printf("                                 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n\n\n");
 
 printf("                ---------------------------------------------------------------------\n");
 printf("                                   Elenco comandi base con esempi :\n");
@@ -1111,23 +1111,23 @@ void yyerror(char *s, ...)
 
 void welcomeMessage(){
     printf("\n");
-    printf("                +-+-+-+-+-+-+-+ +-+-+ +-+-+-+\n");
-    printf("                |W|e|l|c|o|m|e| |t|o| |t|h|e|  \n");                          
-    printf("                +-+-+-+-+-+-+-+ +-+-+ +-+-+-+\n");
-    printf(" ad88888ba   88888888888  88888888ba   88888888ba          db \n");           
-    printf("d8'     '8b  88           88      '8b  88      '8b        d88b          \n"); 
-    printf("Y8,          88           88      ,8P  88      ,8P       d8'`8b          \n");
-    printf("`Y8aaaaa,    88aaaaa      88aaaaaa8P'  88aaaaaa8P'      d8'  `8b         \n");
-    printf("  `aaaayy8   88aaaaa      88''''88'    88''''88h       8Yaaaaaa8b       \n");
-    printf("        `8b  88           88    `8b    88    `8b      d8''''''''8b       \n");
-    printf("Y8a     a8P  88           88     `8b   88     `8b    d8'        `8b      \n");
-    printf(" YY88888PP   88888888888  88      `8b  88      `8b  d8'          `8b     \n");
-    printf("          +-+-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+ \n");
-    printf("          |p|r|o|g|r|a|m|m|i|n|g| |l|a|n|g|u|a|g|e|!|  \n");                          
-    printf("          +-+-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+ \n\n\n");
-    printf("     +-+-+-+-+-+-+ +-+-+-+-+ +-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ \n");
-    printf("     | |W|r|i|t|e| |h|e|l|p| |i|f| |y|o|u| |n|e|e|d| |i|t| |\n");                          
-    printf("     +-+-+-+-+-+-+ +-+-+-+-+ +-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+\n");
+    printf("                  +-+-+-+-+-+-+-+ +-+-+ +-+-+-+\n");
+    printf("                  |W|e|l|c|o|m|e| |t|o| |t|h|e|  \n");                          
+    printf("                  +-+-+-+-+-+-+-+ +-+-+ +-+-+-+\n");
+    printf("   ad88888ba   88888888888  88888888ba   88888888ba          db \n");           
+    printf("  d8'     '8b  88           88      '8b  88      '8b        d88b          \n"); 
+    printf("  Y8,          88           88      ,8P  88      ,8P       d8'`8b          \n");
+    printf("  `Y8aaaaa,    88aaaaa      88aaaaaa8P'  88aaaaaa8P'      d8'  `8b         \n");
+    printf("    `aaaayy8   88aaaaa      88''''88'    88''''88h       8Yaaaaaa8b       \n");
+    printf("          `8b  88           88    `8b    88    `8b      d8''''''''8b       \n");
+    printf("  Y8a     a8P  88           88     `8b   88     `8b    d8'        `8b      \n");
+    printf("   YY88888PP   88888888888  88      `8b  88      `8b  d8'          `8b     \n");
+    printf("            +-+-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+ \n");
+    printf("            |p|r|o|g|r|a|m|m|i|n|g| |l|a|n|g|u|a|g|e|!|  \n");                          
+    printf("            +-+-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+ \n\n\n");
+    printf("      +-+-+-+-+-+-+ +-+-+-+-+ +-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ \n");
+    printf("      | |W|r|i|t|e| |h|e|l|p| |i|f| |y|o|u| |n|e|e|d| |i|t| |\n");                          
+    printf("      +-+-+-+-+-+-+ +-+-+-+-+ +-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+\n");
     printf("\n");
 }
 
