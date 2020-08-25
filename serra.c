@@ -709,11 +709,11 @@ void archivia (char *v){
 
 void helpMessage(){
 
-printf("                                 +-+-+-+-+-+ +-+-+-+-+ +-+-+-+-+ +-+-+\n");
+printf("                                 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n");
 printf("                                 |                                   |\n");  
 printf("                                 |    ** Manuale di istruzione **    |\n");          
 printf("                                 |                                   |\n");  
-printf("                                 +-+-+-+-+-+ +-+-+-+-+ +-+-+-+-+ +-+-+\n\n\n");
+printf("                                 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n\n\n");
 
 printf("                ---------------------------------------------------------------------\n");
 printf("                                   Elenco comandi base con esempi :\n");
