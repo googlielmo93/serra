@@ -20,6 +20,7 @@
 "[" { return yytext[0]; }
 "]" { return yytext[0]; }
 
+
  /* Operazioni di comparazione */
 ">"     { yylval.func = 1; return CMP; }
 "<"     { yylval.func = 2; return CMP; }
@@ -58,30 +59,28 @@
 "->" { return ARROW;}
 
 
+ /* Modalità User */
 "CMD" { printf("User Mode:\t"); }
 
 
- /* Funzioni senza parametri, funzionalitù di sistema */
+ /* Funzioni senza parametri, funzionalità di sistema */
 "clear" { yylval.func = B_clear; return SYSTEM; }
 "help" { yylval.func = B_help; return SYSTEM; }
 
 
-
  /* Stringhe alfanumeriche (quindi contiene anche i caratteri?). Ho cambiato il riconoscimento delle stringhe prima era_["][a-zA-Z][,]?[a-zA-Z0-9]*["] */
-
 \"([^\\\"]|\\.)*\" {            
                                 int dimString= strlen(yytext)+1;
                                 char subbuff[dimString-2];
                                 memmove( subbuff, &yytext[1], dimString-3 );
                                 subbuff[dimString-3] = '\0';
                                 yylval.s = search(subbuff, NULL); 
-                                //printf("SSBUF:%s\n", subbuf);
                                 return STRING; 
 }
 
 
-
-[a-zA-Z][a-zA-Z0-9]*  { yylval.s = search(yytext, NULL); return NAME; }            /* SERVE PER DEFINIRE I SIMBOLI PER I NOMI DELLE FUNZIONI */
+ /* SERVE PER DEFINIRE I SIMBOLI PER I NOMI DELLE FUNZIONI */
+[a-zA-Z][a-zA-Z0-9]*  { yylval.s = search(yytext, NULL); return NAME; }            
 
  /* Numeri in virgola mobile */
  /*Prende la prima cifra intera dopo la virgola. E i numeri interi li prende solo fino a 10, da discutere*/
