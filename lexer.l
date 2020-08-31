@@ -63,13 +63,23 @@
 "CMD" { printf("User Mode:\t"); }
 
 
+
+"create array" { return ARRAY; }
+"integer" { return INTEGER;}
+"char" {  return CHAR;}
+"device" {return DEVICE;}
+"add" {  yylval.func = B_add; return ADD; }
+"get" { yylval.func = B_get; return GET;}
+"set" { yylval.func = B_set; return SET;}
+"remove" {yylval.func = B_remove; return REMOVE;}
+ 
  /* Funzioni senza parametri, funzionalità di sistema */
 "clear" { yylval.func = B_clear; return SYSTEM; }
 "help" { yylval.func = B_help; return SYSTEM; }
 
 
  /* Stringhe alfanumeriche.*/
-\"([^\\\"]|\\.)*\" {            
+["][a-zA-Z][a-zA-Z0-9]*["] {            
                                 int dimString= strlen(yytext)+1;
                                 char subbuff[dimString-2];
                                 memmove( subbuff, &yytext[1], dimString-3 );
@@ -80,7 +90,8 @@
 
 
  /* SERVE PER DEFINIRE I SIMBOLI PER I NOMI DELLE FUNZIONI */
-[a-zA-Z][a-zA-Z0-9]*  { yylval.s = search(yytext, NULL); return NAME; }            
+[a-zA-Z][a-zA-Z0-9]*  {yylval.s = search(yytext, NULL); 
+                        return NAME; }            
 
  /* Numeri in virgola mobile */
  /* Prende la prima cifra intera dopo la virgola. */

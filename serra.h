@@ -6,6 +6,7 @@
 struct symbol {
   char *name;
   char *value;
+  double dim;
   struct ast *func;         /* stmt per le funzioni */
   struct ast *dev;         /* stmt per le funzioni */
   struct argsList *syms;     /* Lista dei simboli */
@@ -90,14 +91,21 @@ enum builtFunc {
   B_interval = 9,
   B_insertDevice = 10,
   B_readFile = 11,
+  B_add = 12,
+  B_get = 13,
+  B_set=14,
+  B_remove=15,
 };
 
 
 enum builtFuncSystem {            
     B_clear = 1,
-    B_help = 2
+    B_help = 2,
 };
 
+//enum builtFuncArray {            
+ //   B_add = 1
+//};
 
 
 /* Struttura Nodo dell'albero di Sintassi Astratto */
@@ -113,6 +121,7 @@ struct funcBuiltIn {
   int nodetype;         /* tipo nodo F -> Funzioni Built-In*/
   struct ast *l;
   struct ast *r;
+  struct ast *t;
   enum builtFunc functype;
 };
 
@@ -124,6 +133,14 @@ struct funcBuiltInSystem {
   int nodetype;         /* tipo nodo O -> Funzioni Built-In System o senza argomenti */
   enum builtFuncSystem functype;
 };
+
+
+//struct funcBuiltArray {    
+  //int nodetype;         /* tipo nodo A -> Funzioni Built-In*/
+  //struct ast *l;
+  //struct ast *r;
+  //enum builtFuncArray functype;
+//};
 
 
 /* Struttura Nodo per l'AST, per le funzioni utente */
@@ -162,7 +179,7 @@ struct symasgn {
 /* FUNZIONI PER LA GENERAZIONE DI UN AST */
 struct ast *newast(int nodetype, struct ast *l, struct ast *r);
 struct ast *newcmp(int cmptype, struct ast *l, struct ast *r);
-struct ast *newfunc(int functype, struct ast *l, struct ast *r);
+struct ast *newfunc(int functype, struct ast *l, struct ast *r,  struct ast *t);
 struct ast *newfuncSystem(int functype);
 struct ast *newcall(struct symbol *s, struct ast *l);
 struct ast *newref(struct symbol *s);
@@ -171,6 +188,10 @@ struct ast *newnum(double d);
 struct ast *newString(struct symbol *s);
 struct ast *newDev(struct symbol *ps, struct argsList *l);
 struct ast *newContent(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
+
+//gnerazione array
+void newArray (struct symbol *nome, double dimensione, double tipo);
+
 
 
 /* Per la definizione di una nuova funzione*/
@@ -197,5 +218,3 @@ void dumpast(struct ast *a, int level);
 static int index_file=0;
 
 extern FILE *yyin;
-
-

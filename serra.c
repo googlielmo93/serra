@@ -1,11 +1,12 @@
-#  include <stdio.h>
-#  include <stdlib.h>
-#  include <stdarg.h>
-#  include <string.h>
-#  include <math.h>
-#  include <ctype.h>
-#  include <time.h>
-#  include "serra.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
+#include <math.h>
+#include <ctype.h>
+#include <time.h>
+#include "serra.h"
+#include <unistd.h>
 
 static FILE *temp;
 
@@ -43,19 +44,19 @@ struct symbol *search(char* sym, char* type){
     
     //Con le prime due operazioni ti sei preso la entry corrispondente al tuo device di fatto, c'è bisogno di scorrerti la tabella dei simboli?
   while(--symcount >= 0) {
-
     if(symptr->name && !strcmp(symptr->name, sym)) {        
  /* se trova il simbolo cercato ritorna il puntatore alla cella contenente il simbolo cercato */
         return symptr; 
     }
 
     if(!symptr->name) {             /* NUOVO SIMBOLO */ //se è nullo
-      if(!type){    //se è nullo
+      if(!type){    //se è nulloe
+
          symptr->name = strdup(sym);
          symptr->value = 0;
          symptr->dev = NULL;
          symptr->func = NULL;
-         symptr->syms = NULL;  //LISTA DI SIMBOLI
+         symptr->syms = NULL;  //LISTA DI SIMBOLIeee
           return symptr;
       }
       else{
@@ -65,7 +66,6 @@ struct symbol *search(char* sym, char* type){
          }
       }
     }
-
     if(++symptr >= symtab + DIMHASH) {      /* Ricomincia da capo se la cella corrente è l'ultima */
         symptr = symtab;                       
     }
@@ -126,6 +126,77 @@ struct ast *newString(struct symbol *s)
 }
 
 
+
+
+
+
+void update_lookup (char *sym, struct ast *ref, double tipo,double d){
+  struct symbol *symptr = &symtab[ symhash(sym) % DIMHASH ];
+    
+  int symcount = DIMHASH;      /* viene passata la dimensione della tabella per cercare in tutte le celle di questa il simbolo cercato */
+    
+    //Con le prime due operazioni ti sei preso la entry corrispondente al tuo device di fatto, c'è bisogno di scorrerti la tabella dei simboli?
+  while(--symcount >= 0) {
+
+    if(!symptr->name) {        
+ /* se trova il simbolo cercato ritorna il puntatore alla cella contenente il simbolo cercato */
+        symptr->name = strdup(sym);
+        double *z=malloc(sizeof(double));
+        z[0]=tipo;
+        symptr->value = (char *)z;
+        symptr->dev = ref; //riferimento alla zona di memoria dove l'array è stato allocato
+        symptr->dim = 0;
+        symptr->syms = NULL;  //LISTA DI SIMBOLI
+       //printf("punta:%i, tipo:%f, tipo:%f\n",  symptr->dev, ((double *)symptr->value)[0] , tipo);
+        
+       printf("ARRAY CREATO CORRETTAMENTE\n");
+         
+        break;
+
+    }else{
+        printf("QUESTO SIMBOLO GIA ESISTE, array non creato\n");
+        break;
+    }
+
+
+    if(++symptr >= symtab + DIMHASH) {      /* Ricomincia da capo se la cella corrente è l'ultima */
+        symptr = symtab;                       
+    }
+  }
+  
+
+}
+
+
+
+void newArray (struct symbol *nome, double dimensione, double tipo){
+      char *v=nome->name ;
+      v=symhashDev(v);
+    
+    //printf("nom array:%s , %i, %f\n", nome->name, dimensione, tipo);
+    if (tipo==1){
+        int *d=malloc(sizeof(int));
+        //printf("v:%s\n", v);
+        update_lookup(v, (struct ast *)d, tipo, dimensione);
+
+    }
+    else if (tipo==2){
+        struct symbol *d=malloc(sizeof(struct symbol));
+        update_lookup(v, (struct ast *)d, tipo, dimensione);
+
+
+    }else{
+        struct device *d=malloc(sizeof(struct device));
+        update_lookup(v, (struct ast  *)d, tipo, dimensione);
+    }
+   
+    //struct stringVal *d = malloc(dimensione * sizeof(struct stringVal));
+    
+    
+    
+}
+
+
 struct ast *newcmp(int cmptype, struct ast *l, struct ast *r)
 {
   struct ast *a = malloc(sizeof(struct ast));
@@ -141,7 +212,7 @@ struct ast *newcmp(int cmptype, struct ast *l, struct ast *r)
 }
 
 
-struct ast *newfunc(int functype, struct ast *l, struct ast *r)
+struct ast *newfunc(int functype, struct ast *l, struct ast *r, struct ast *t)
 {
   struct funcBuiltIn *a = malloc(sizeof(struct funcBuiltIn));
   
@@ -152,11 +223,31 @@ struct ast *newfunc(int functype, struct ast *l, struct ast *r)
   a->nodetype = 'F';
   a->l = l;
   a->r = r;
+  a->t = t;
+      //printf("doubl:%f, %f, %i\n", ((double *) t )[0], ((double *)(a->t)) [0] , t);
+
   a->functype = functype;
   //printf("%d", functype);       //DEBUG
     
   return (struct ast *)a;
 }
+
+/*struct ast *newfunc_array(int functype, struct ast *l, struct ast *r){
+
+  struct funcBuiltArray *a = malloc(sizeof(struct funcBuiltArray));
+  
+  if(!a) {
+    yyerror("Spazio di memoria insufficiente\n");
+    exit(0);
+  }
+  a->nodetype = 'A';
+  a->l = l;
+  a->r = r;
+  a->functype = functype;
+  //printf("%i, %c", functype, (a->nodetype));      //DEBUG
+    
+  return (struct ast *)a;
+}*/
 
 struct ast *newfuncSystem(int functype)
 {
@@ -171,6 +262,7 @@ struct ast *newfuncSystem(int functype)
   //printf("%d", functype);       //DEBUG
   return (struct ast *)a;
 }
+
 
 
 struct ast * newDev(struct symbol *ps, struct argsList *l)
@@ -194,7 +286,6 @@ struct ast * newDev(struct symbol *ps, struct argsList *l)
   
   struct symbol *symbolDev= NULL; 
   symbolDev = search(nameSymbol, "searchSym");
-
 
   if(symbolDev==NULL)    //SE IL DISPOSITIVO NON ESISTE
   {
@@ -381,6 +472,7 @@ void defSymRef(struct symbol *name, struct argsList *syms, struct ast *func)
 struct ast * callbuiltin(struct funcBuiltIn *);
 struct ast * callbuiltinSystem(struct funcBuiltInSystem *);
 static char* calluser(struct userfunc *);
+//struct ast * callbuiltArray (struct funcBuiltArray *);
 
 
 //maggiore (eval(a->l), eval(a->r));
@@ -406,7 +498,8 @@ int maggiore (char *sx, char *dx){
 }
     
 
-
+//newDevice "pippo"  
+//print connect "pippo"
 char* eval(struct ast *a)
 {
   char * v, *a1, *a2;
@@ -415,12 +508,16 @@ char* eval(struct ast *a)
   struct ast *c;
 
   if(!a) {
+      printf("NULL\n");
     yyerror("Errore interno, null eval");
     return 0;
   }
-  switch(a->nodetype) {
-    /* Number constant */
 
+    switch(a->nodetype) {
+            
+
+    /* Number constant */
+          
       case 'K':
                 v= malloc(sizeof((((struct numval *)a)->number)));
                 sprintf(v, "%4.4g", ((struct numval *)a)->number);
@@ -453,7 +550,7 @@ char* eval(struct ast *a)
           //Per lo stesso motivo di case = controlli. Nel caso di funzioni void o funzioni che ritornano null a v viene assegnato NULL. Negli altri casi a v viene assegnato il puntatore al valore. 
           //Quindi in var ci finisce value-> in value tramite un assegnamento precedente, se la variabile non è presente nella tabella dei simboli crea una varaibile NULL. Se non fai un
           //assegamento precedente ci associa un valore a value. Tutte le funzioni embedded create non associano nulla a value. ------>In value ci vanno i valori assegnati<--------. Quindi è necessario a //prescindere un assegmaneto precedente.
-          
+            
               if((((struct symref *)a)->s->value))
                   v=strdup((((struct symref *)a)->s->value));
               else{
@@ -478,19 +575,21 @@ char* eval(struct ast *a)
           
 
 
-  /*  comparisons: da rivedere le precedenze: causa reduce*/
+  /*  comparisons: da rivedere le precedenze: causa reduce
       case '1': 
               a1=eval(a->r);
               a2=eval(a->l);
               h= maggiore(a1,a2); break;    
-          /*a1=eval(a->l); a2=eval(a->r); h= (maggiore (a1, a2)); printf("FINE:%i\n",h); break; */   //>
+          //a1=eval(a->l); a2=eval(a->r); h= (maggiore (a1, a2)); //printf("FINE:%i\n",h); break;    //>
       case '2': v = strdup((eval(a->l) < eval(a->r))? 1 : 0); break;      //<
       case '3': v = strdup((eval(a->l) != eval(a->r))? 1 : 0); break;     //==
       case '4': v = strdup((eval(a->l) == eval(a->r))? 1 : 0); break;
       case '5': v = strdup((eval(a->l) >= eval(a->r))? 1 : 0); break;
       case '6': v = strdup((eval(a->l) <= eval(a->r))? 1 : 0); break;
+      
+      I COMPARE NON SONO STATI PREVISTI AL MOMENTO E SONO CAUSA DI 6 WARNING. AL MOMENTO LI COMMENTO, POI SE SI IMPLEMENTERANNO SI DECCOMENTANO. AL MOMENTO COMMENTATI PER LEVARE I WARNING.
   
-
+*/
 
   /* control content */
   /* null if/else/do expressions allowed in the grammar, so check for them */
@@ -523,13 +622,15 @@ char* eval(struct ast *a)
 
      case 'L': eval(a->l); v = eval(a->r); break;
 
-     case 'F': v = callbuiltin((struct funcBuiltIn *)a);/*AGGIUNTA: return ((struct symbol *)v)->name;*/ break;
+     case 'F': v = (char *) callbuiltin((struct funcBuiltIn *)a);/*AGGIUNTA: return ((struct symbol *)v)->name;*/ break;
 
-     case 'O': v = callbuiltinSystem((struct funcBuiltInSystem *)a); break;
+     case 'O': v = (char *) callbuiltinSystem((struct funcBuiltInSystem *)a); break;
+            
+     //case 'A': v = callbuiltArray((struct funcBuiltArray *)a); break;
 
      case 'U': v = calluser((struct userfunc *)a); break;
 
-     case 'D': break;
+     case 'D': return "D"; break; //se non fatto scorrere albero cosi evitiamo la segmentazione in annidamento di funzioni
           
 
 
@@ -550,7 +651,6 @@ void switchOn(char *v){
     struct symbol *sym=  search(nameSymbol, "searchSym");
     printf("symbol:%s, %i, %i\n",sym->name, sym->value, ((struct device *) (sym->dev))->status);
     printf("5\n");
-
     if(sym){
         //struct device *d= symDev->dev;
         //d->status=1;
@@ -587,7 +687,7 @@ struct ast *connect(char *v){
 
 //Accensione del dispositivo:
 //Descrizione: L'accensione del dispositivo è stata intesa come la variazione dello status dell'ogetto del device. L'ogetto device è memorizzato all'interno la tabella dei simboli nel campo Dev (è stato aggiunto una cosa piccola dentro search, chiedere conferma a vincenzo). Quindi bisogna effettuare una connect (si puo richiamare dentro il case di B_connect, confrontarsi) che restituisce il simbolo. Se la connessione è andata a buon fine si va a modificare il campo Dev.
-struct ast *switchOn(char *v){
+struct symbol *switchOn(char *v){
     
     printf("\t\t\tVerifica in corso della connessione del dispositivo....\n");
     struct symbol *sym= (struct symbol *) connect(v);
@@ -599,11 +699,11 @@ struct ast *switchOn(char *v){
         printf("\t\t\tDispositivo inesistente e quindi non acceso\n\n");
         return NULL;
     }
-    return (struct ast *)sym;
+    return sym;
         
 }
 
-struct ast *switchOff(char *v){
+struct symbol *switchOff(char *v){
     
     printf("\t\t\tVerifica in corso della connessione del dispositivo....\n");
     struct symbol *sym= (struct symbol *) connect(v);
@@ -615,7 +715,7 @@ struct ast *switchOff(char *v){
         printf("\t\t\tDispositivo inesistente\n\n");
         return NULL;
     }
-    return (struct ast *)sym;
+    return sym;
         
 }
 
@@ -623,7 +723,7 @@ struct ast *switchOff(char *v){
 /*Funzione interval che dato un tipo ast in input va a verificare l'esistenza di quel device. Nel caso in cui il device esiste cioè è presente nalla tabella dei simboli va a controllare tramite un parametro passato come parametro, cioè l'istante di tempo, quanti secondi devono passare per mantenere attivo il device. Passato l'intervallo di tempo lo pone a 0. Quindi teoricamente questa funzione pretende in input due parametri rappresenti da una stringa che identifica il periodo di tempo in cui deve stare attivo e il device da attivare. Come parametro prende il device da attivare per quell'intervalo di tempo*/
 /*interval "device, 10 minuti"-> formato: device, 10 minuti*/
 
-struct ast *interval (int r, char *v){
+struct symbol *interval (int r, char *v){
     
     //GESTIONE STRINGHE: da 560 a riga 575
     //Estrazione dei paraemtri: devicePippo e 10
@@ -709,122 +809,394 @@ void archivia (char *v){
 
 void helpMessage(){
 
-printf("                                 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n");
-printf("                                 |                                   |\n");  
-printf("                                 |    ** Manuale di istruzione **    |\n");          
-printf("                                 |                                   |\n");  
-printf("                                 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n\n\n");
+    printf("                                 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n");
+    printf("                                 |                                   |\n");  
+    printf("                                 |    ** Manuale di istruzione **    |\n");          
+    printf("                                 |                                   |\n");  
+    printf("                                 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n\n\n");
 
-printf("                ---------------------------------------------------------------------\n");
-printf("                                   Elenco comandi base con esempi :\n");
-printf("                ---------------------------------------------------------------------\n");
-
-
-printf(" ---------------------------\n");
-printf(" |  Inserimento Stringa :  |\n");                          
-printf(" ---------------------------\n");
-printf("-> \"Testo Stringa\" [INVIO]\n\n");
-printf("-   newString return struct ast * pointerSimbolo\n\n");
-printf("-   Esempio: 'Sono una Stringa'\n\n\n");
+    printf("                ---------------------------------------------------------------------\n");
+    printf("                                   Elenco comandi base con esempi :\n");
+    printf("                ---------------------------------------------------------------------\n");
 
 
-printf(" ----------------------\n");
-printf(" |  Stampa Stringa :  |\n");                          
-printf(" ----------------------\n");
-printf("->  sintassi: print “Stringa” [ INVIO ]\n\n");
-printf("-   callbuiltin return char * pointerSymbol\n\n");
-printf("-   Note: Anche l’inserimento dell’istruzione sopra produce la stampa.\n\n");
-printf("-   Esempio: print “Ciao sono una Stringa” [ INVIO ]\n\n\n");
+    printf(" ---------------------------\n");
+    printf(" |  Inserimento Stringa :  |\n");                          
+    printf(" ---------------------------\n");
+    printf("-> \"Testo Stringa\" [INVIO]\n\n");
+    printf("-   newString return struct ast * pointerSimbolo\n\n");
+    printf("-   Esempio: 'Sono una Stringa'\n\n\n");
 
 
-printf(" ----------------------------------------------\n");
-printf(" |  Inserimento Semplice Nuovo Dispositivo :  |\n");                          
-printf(" ----------------------------------------------\n");
-printf("->  sintassi: newDev “Nome Device” [INVIO]\n\n");
-printf("-   newDev return struct ast * pointerDevice\n\n");
-printf("-   Esempio: newDevice “dev1” [ INVIO ]\n\n\n");
+    printf(" ----------------------\n");
+    printf(" |  Stampa Stringa :  |\n");                          
+    printf(" ----------------------\n");
+    printf("->  sintassi: print “Stringa” [ INVIO ]\n\n");
+    printf("-   callbuiltin return char * pointerSymbol\n\n");
+    printf("-   Note: Anche l’inserimento dell’istruzione sopra produce la stampa.\n\n");
+    printf("-   Esempio: print “Ciao sono una Stringa” [ INVIO ]\n\n\n");
 
 
-printf(" ---------------------------------------------------------------------------\n");
-printf(" |  Inserimento Nuovo Dispositivo con Collegamenti ad altri Dispositivi :  |\n");                          
-printf(" ---------------------------------------------------------------------------\n");
-printf("->  sintassi: newDev “Nome Device” → [ “Nome Device 1”, “Nome Device 2”, …] [ INVIO ]\n\n");
-printf("-   newDev return struct ast * pointerDevice\n\n");
-printf("-   Esempio: newDevice “dev1” → [“dev2”, “dev3”, “dev4”] [ INVIO ]\n\n\n");
+    printf(" ----------------------------------------------\n");
+    printf(" |  Inserimento Semplice Nuovo Dispositivo :  |\n");                          
+    printf(" ----------------------------------------------\n");
+    printf("->  sintassi: newDev “Nome Device” [INVIO]\n\n");
+    printf("-   newDev return struct ast * pointerDevice\n\n");
+    printf("-   Esempio: newDevice “dev1” [ INVIO ]\n\n\n");
 
 
-printf(" ----------------------------------------\n");
-printf(" |  Richiesta Status con Dispositivo :  |\n");                          
-printf(" ----------------------------------------\n");
-printf("->  sintassi: status “Nome Device” [ INVIO ]\n\n");
-printf("-   callbuiltin return struct ast * pointerSymbol\n\n");
-printf("-   Esempio: status “dev1” [ INVIO ]\n\n\n");
+    printf(" ---------------------------------------------------------------------------\n");
+    printf(" |  Inserimento Nuovo Dispositivo con Collegamenti ad altri Dispositivi :  |\n");                          
+    printf(" ---------------------------------------------------------------------------\n");
+    printf("->  sintassi: newDev “Nome Device” → [ “Nome Device 1”, “Nome Device 2”, …] [ INVIO ]\n\n");
+    printf("-   newDev return struct ast * pointerDevice\n\n");
+    printf("-   Esempio: newDevice “dev1” → [“dev2”, “dev3”, “dev4”] [ INVIO ]\n\n\n");
 
 
-printf(" ---------------------------------------------\n");
-printf(" |  Richiesta Connessione con Dispositivo :  |\n");                          
-printf(" ---------------------------------------------\n");
-printf("->  sintassi: connect “Nome Device” [ INVIO ]\n\n");
-printf("-   callbuiltin return struct ast \* pointerSymbol\n\n");
-printf("-   Esempio: connect “dev1” [ INVIO ]\n\n\n");
+    printf(" ----------------------------------------\n");
+    printf(" |  Richiesta Status con Dispositivo :  |\n");                          
+    printf(" ----------------------------------------\n");
+    printf("->  sintassi: status “Nome Device” [ INVIO ]\n\n");
+    printf("-   callbuiltin return struct ast * pointerSymbol\n\n");
+    printf("-   Esempio: status “dev1” [ INVIO ]\n\n\n");
 
 
-printf(" -----------------------------------------------\n");
-printf(" |  Richiesta Riconnessione con Dispositivo :  |\n");                          
-printf(" -----------------------------------------------\n");
-printf("->  sintassi: reconnect “Nome Device” [ INVIO ]\n\n");
-printf("-   callbuiltin return struct ast \* pointerSymbol\n\n");
-printf("-   Esempio: reconnect “dev1” [ INVIO ]\n\n\n");
+    printf(" ---------------------------------------------\n");
+    printf(" |  Richiesta Connessione con Dispositivo :  |\n");                          
+    printf(" ---------------------------------------------\n");
+    printf("->  sintassi: connect “Nome Device” [ INVIO ]\n\n");
+    printf("-   callbuiltin return struct ast * pointerSymbol\n\n");
+    printf("-   Esempio: connect “dev1” [ INVIO ]\n\n\n");
 
 
-printf(" -------------------------------------\n");
-printf(" |  Accensione status dispositivo :  |\n");                          
-printf(" -------------------------------------\n");
-printf("->  sintassi: switchOn ”StringaNomeDevice”\n\n");
-printf("-   callbuiltin return struct ast \* pointerSymbol\n\n");
-printf("-   Esempio: switchOn ”dev1”  [INVIO]\n\n\n");
+    printf(" -----------------------------------------------\n");
+    printf(" |  Richiesta Riconnessione con Dispositivo :  |\n");                          
+    printf(" -----------------------------------------------\n");
+    printf("->  sintassi: reconnect “Nome Device” [ INVIO ]\n\n");
+    printf("-   callbuiltin return struct ast * pointerSymbol\n\n");
+    printf("-   Esempio: reconnect “dev1” [ INVIO ]\n\n\n");
 
 
-printf(" ------------------------------\n");
-printf(" |  Off status dispositivo :  |\n");                          
-printf(" ------------------------------\n");
-printf("->  sintassi: switchOff ”StringaNomeDevice”\n\n");
-printf("-   callbuiltin return struct ast \* pointerSymbol\n\n-   Esempio: Esempio:");
-printf("->  switchOff ”dev1”  [INVIO]\n\n\n");
+    printf(" -------------------------------------\n");
+    printf(" |  Accensione status dispositivo :  |\n");                          
+    printf(" -------------------------------------\n");
+    printf("->  sintassi: switchOn ”StringaNomeDevice”\n\n");
+    printf("-   callbuiltin return struct ast * pointerSymbol\n\n");
+    printf("-   Esempio: switchOn ”dev1”  [INVIO]\n\n\n");
 
 
-printf(" ---------------------------------------------------------------------------\n");
-printf(" |  Accensione dello status del device per un certo intervallo di tempo :  |\n");                          
-printf(" ---------------------------------------------------------------------------\n");
-printf("->  sintassi: interval ”NomeDevice”-Secondi");
-printf("-   callbuiltin return struct ast * pointerSymbol\n\n");
-printf("-   Note: E' un unica stringa dove il primo parametro identifica il device da accendere,\n");
-printf("    il secondo definisce per quanti secondi deve stare acceso.");
-printf("-   Esempio: (”pippo,10”, ”paperino,20”)  [INVIO]\n\n");
-printf("-   Altro Esempio:  interval ”pippo”-10  [INVIO]\n\n\n");
+    printf(" ------------------------------\n");
+    printf(" |  Off status dispositivo :  |\n");                          
+    printf(" ------------------------------\n");
+    printf("->  sintassi: switchOff ”StringaNomeDevice”\n\n");
+    printf("-   callbuiltin return struct ast * pointerSymbol\n\n-   Esempio: Esempio:");
+    printf("->  switchOff ”dev1”  [INVIO]\n\n\n");
 
 
-printf(" ------------------------------------\n");
-printf(" |  Diagnostica del dispostitivo :  |\n");                          
-printf(" ------------------------------------\n");
-printf("-   ”diagnostic” dev1\n\n\n");
+    printf(" ---------------------------------------------------------------------------\n");
+    printf(" |  Accensione dello status del device per un certo intervallo di tempo :  |\n");                          
+    printf(" ---------------------------------------------------------------------------\n");
+    printf("->  sintassi: interval ”NomeDevice”-Secondi");
+    printf("-   callbuiltin return struct ast * pointerSymbol\n\n");
+    printf("-   Note: E' un unica stringa dove il primo parametro identifica il device da accendere,\n");
+    printf("    il secondo definisce per quanti secondi deve stare acceso.");
+    printf("-   Esempio: (”pippo,10”, ”paperino,20”)  [INVIO]\n\n");
+    printf("-   Altro Esempio:  interval ”pippo”-10  [INVIO]\n\n\n");
 
 
-printf(" ----------------------------------\n");
-printf(" |  Archiviazione di un device :  |\n");                          
-printf(" ----------------------------------\n");
-printf("->  sintassi: archive ”NomeDevice”\n\n");
-printf("-   null\n\n");
-printf("-   Esempio: > archive ”pippo”  [INVIO]\n\n\n");
+    printf(" ------------------------------------\n");
+    printf(" |  Diagnostica del dispostitivo :  |\n");                          
+    printf(" ------------------------------------\n");
+    printf("-   ”diagnostic” dev1\n\n\n");
 
 
-printf(" ------------------------------------------------------\n");
-printf(" |  Definizioni variabili e assegnazioni variabili :  |\n");                          
-printf(" ------------------------------------------------------\n");
-printf("->  sintassi: +-\n\n");
-printf("-   Note: Come in Matlab\n\n");
+    printf(" ----------------------------------\n");
+    printf(" |  Archiviazione di un device :  |\n");                          
+    printf(" ----------------------------------\n");
+    printf("->  sintassi: archive ”NomeDevice”\n\n");
+    printf("-   null\n\n");
+    printf("-   Esempio: > archive ”pippo”  [INVIO]\n\n\n");
+
+
+    printf(" ------------------------------------------------------\n");
+    printf(" |  Definizioni variabili e assegnazioni variabili :  |\n");                          
+    printf(" ------------------------------------------------------\n");
+    printf("->  sintassi: +-\n\n");
+    printf("-   Note: Come in Matlab\n\n");
 }
 
+
+ struct symbol *ricerca (char *v){
+    
+    //io conosco il nome dell'array
+ 
+    v=symhashDev(v);
+    char *nome_array= v;
+    //tipo array:
+    struct symbol *s=search(nome_array, "searchSym");
+    
+    return s;
+}
+
+void remove_array (struct funcBuiltIn *f){
+    
+    struct symbol *s= ricerca (((struct symbol *) (f->r))->name);
+
+    if (s!=NULL && ((double *)(s)->value) !=NULL ){
+        
+        double *tipo= (double *)(s)->value;
+        double dimensione= s->dim;
+
+        if (tipo[0]==1){
+            
+            int *x= (int *) (s)->dev;
+            int *d=malloc((dimensione -1)* sizeof(int));
+
+            for (int i=0; i<(int)  (dimensione-1) ; i++)
+                d[i]=x[i];
+        
+            //libero la vecchia area di memoria
+            free (x);
+            s->dev = (struct ast *) d;
+            s->dim = dimensione -1;
+        }
+
+        if (tipo[0]==2){
+
+            struct symbol *x= (struct symbol *) (s)->dev;
+            struct symbol *d=malloc((dimensione -1)* sizeof(struct symbol));
+
+            for (int i=0; i<(int)  (dimensione-1) ; i++)
+                (d[i]).name =  (x[i]).name;
+            free (x);
+            s->dev = (struct ast *) d;
+            s->dim = dimensione -1;
+        }
+
+
+        if (tipo[0]==3){
+            
+            struct device *x= (struct device *) (s)->dev;
+            struct device *d=malloc((dimensione -1)* sizeof(struct device));
+
+            for (int i=0; i<(int)  (dimensione-1) ; i++)
+                d[i] =  x[i];
+            free (x);
+            s->dev = (struct ast *) d;
+            s->dim = dimensione -1;
+        }
+
+
+    }
+    
+
+    
+}
+
+
+void set_array (struct funcBuiltIn *f){
+    
+    struct symbol *s= ricerca (((struct symbol *) (f->r))->name);
+    
+    if (s!=NULL && ((double *)(s)->value) !=NULL ){
+        double *tipo= (double *)s->value;
+
+
+        //dimensone array:
+        double dimensione= s->dim;
+        double indice= ((struct numval *) (f->t))->number;
+
+        if (indice >= 0 && dimensione>0 && indice < dimensione){
+
+            if (tipo[0]==1 && ((f->l)->nodetype)==75){
+                int *x= (int *) s->dev;
+                double valore= ((struct numval *) (f->l))->number;
+                x[(int)indice]= (int) valore;
+
+            }
+
+
+             if (tipo[0]==2 && ((f->l)->nodetype)==67){
+                struct symbol *x= (struct symbol *) s->dev;
+                char *valore= (((struct stringVal *) (f->l))->s)->name;
+                (x[(int)indice]).name= valore;
+
+            }
+
+
+             if (tipo[0]==3 && ((f->l)->nodetype)!=67 && ((f->l)->nodetype)!=75){
+                struct device *x= (struct device *) s->dev;
+                struct device *valore= (struct device *) (f->l);
+                x[(int)indice]= *valore;
+                 
+            }
+        }
+    
+    }
+    
+}
+
+char *get_index (struct funcBuiltIn *f){
+    
+    char charray[255];
+    struct symbol *s= ricerca (((struct symbol *) (f->r))->name);
+    
+    //SE è UN ARRAY E SE IL SIMBOLO ESISTE
+    if (s!=NULL && ((double *)(s)->value) !=NULL ){
+        
+        double *tipo= (double *)s->value;
+        
+        //dimensone array:
+        double dimensione= s->dim;
+        double valore= ((struct numval *) (f->l))->number;
+        
+        if (valore >= 0 && dimensione>0 && valore < dimensione){
+            
+            if (tipo[0]==1){
+                int *x= (int *) s->dev;
+                int c=x[(int)valore];
+                sprintf(charray, "%i", c);
+            }
+
+            if (tipo[0]==2 ){
+                struct symbol *x= (struct symbol *) s->dev;
+                return (x[(int)valore]).name;
+            }
+
+            if (tipo[0]==3){
+                struct device *x= (struct device *) s->dev;
+                return ((x[(int)valore]).s )->name;
+            }
+        }
+    } 
+    return charray;
+}
+
+
+void get_array (struct funcBuiltIn *f){
+    
+    struct symbol *s= ricerca (((struct symbol *) (f->r))->name);
+    
+    if (s!=NULL && ((double *)(s)->value) !=NULL ){
+        double *tipo= (double *)s->value;
+
+        //dimensone array:
+        double dimensione= s->dim;
+
+        if (tipo[0]==1){
+            
+            int *x= (int *) s->dev;    
+            for (int i=0; i<(int)  dimensione ; i++)
+                printf("%i\n",x[i]);
+
+        }
+
+        if (tipo[0]==2){
+
+            struct symbol *x= (struct symbol *) s->dev;
+            for (int i=0; i<(int)  dimensione ; i++)
+                printf("%s\n",(x[i]).name );   
+
+        }
+
+        if (tipo[0]==3){
+
+            struct device *x= (struct device *) s->dev;
+            for (int i=0; i<(int)  dimensione ; i++)
+                printf("%s\n",((x[i]).s)->name);
+        } 
+    }
+}
+
+
+
+
+
+void add_array(struct funcBuiltIn *f){
+
+    struct symbol *s= ricerca (((struct symbol *) (f->r))->name);
+
+    //SE è UN ARRAY E SE IL SIMBOLO ESISTE
+    if (s!=NULL && ((double *)(s)->value) !=NULL ){    //intero
+        
+        double *tipo= (double *)(s)->value;
+        //dimensone array:
+        double dimensione= s->dim;
+
+        if (tipo[0]==1 && ((f->l)->nodetype)==75){
+
+            int *x= (int *) s->dev;
+
+            //valor da insrire nell'array:
+            double valore= ((struct numval *) (f->l))->number;
+            //double valore = ((double *) eval (f->l))[0];
+
+            //occupo una nuova area di meemoria:
+            int *d=malloc((dimensione +1)* sizeof(int));
+
+            //copio nella nuova area di memoria:
+            for (int i=0; i<(int)  dimensione ; i++)
+                d[i]=x[i];
+            d[(int)dimensione]= (int) valore;
+            free (x);
+            s->dev = (struct ast *) d;
+            s->dim = dimensione +1;
+
+        }
+
+        if (tipo[0]==2 && ((f->l)->nodetype)==67){
+            
+            //dev contiene il riferimnto all'array. Rifrimnto alla strattura
+            struct symbol *x= (struct symbol *) s->dev;
+
+            //stringa da insrir
+            char *valore= (((struct stringVal *) (f->l))->s)->name;
+
+            //nuovo array
+            struct symbol *d=malloc((dimensione +1)* sizeof(struct symbol));
+
+            for (int i=0; i<(int)  dimensione ; i++)
+                (d[i]).name =  (x[i]).name;
+            (d[(int)dimensione]).name= valore;
+            free (x);
+            s->dev = (struct ast *) d;
+            s->dim = dimensione +1;
+
+        }
+
+        //arco -> add = newDevice "pippo"
+        //create array device arco (2);
+        if (tipo[0]==3 && ((f->l)->nodetype)!=67 && ((f->l)->nodetype)!=75){
+             struct device *x= (struct device *) s->dev;
+
+            //device da insrire
+            struct device *valore= (struct device *) (f->l);
+
+            //nuovo array
+            struct device *d=malloc((dimensione +1)* sizeof(struct device));
+
+            for (int i=0; i<(int)  dimensione ; i++)
+                d[i] =  x[i];
+            d[(int)dimensione]= *valore;
+            free (x);
+            s->dev = (struct ast *) d;
+            s->dim = dimensione +1;
+
+        }
+
+    }
+
+    
+}
+
+
+//create array integer  ciao (2);
+//integer ciao -> add = 2
+// create array char dino (2);
+// create array device pluto (2);
+// pluto->add = newDevice "nonna"
+// pluto->add = newDevice "nonno"
+// pluto->add = newDevice "nonnnnno"
 
 
 struct ast * callbuiltin(struct funcBuiltIn *f)
@@ -832,7 +1204,7 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
 
   enum builtFunc functype = f->functype;
   //char *v = strdup(eval(f->l));
-  char *v;
+  char *v, *x;
   double r;
   FILE *fconfig, *let;
     
@@ -840,8 +1212,12 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
 
   switch(functype) {
    case B_print:
-         v=strdup(eval(f->l));
-         //printf("display = ");
+              
+          //v= (strdup(eval(f->l)) != NULL ) ? strdup(eval(f->l)) : '/';
+         //v=strdup(eval(f->l));
+         x=eval(f->l);
+         v= x ? strdup(x):strdup("0");
+         //printf("display = %c", v);
          if(atoi(v) || isalpha(v[0]))
              printf("%s\n", v);
           else
@@ -850,25 +1226,29 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
          break;
 
    case B_connect:
-         v=strdup(eval(f->l));
+         x=eval(f->l);
+         v= x ? strdup(x):strdup("0");
+          //v=strdup(eval(f->l));
          printf("Ricerca del dispositivo %s in corso...\n", v);
          v=symhashDev(v);
          symDev= search(v, "searchSym");
          //printf("Sto ritornando symDev:%s\n", symDev->name);
-
+          
          if(symDev){
             printf("Dispositivo Esistente\nRichiesta connessione...\n");     //INSERIRE ENUM CON CODICE DISPOSITIVO COME HTTP 200 AD ESEMPIO
          }else{
             printf("Dispositivo %s: Non Esistente\n", v);  
+            //return "inesistente";
             return NULL;
          }
          //printf("Sto ritornando v:%s\n",  symDev->name);
-
          return (struct ast *) symDev;
          break;
 
    case B_reconnect:
-         v=strdup(eval(f->l));
+         //v=strdup(eval(f->l));
+         x=eval(f->l);
+         v= x ? strdup(x):strdup("0");
          printf("Ricerca del dispositivo %s in corso...\n", v);
          v=symhashDev(v);
          symDev= search(v, "searchSym");
@@ -877,6 +1257,7 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
             printf("Dispositivo Esistente\nRichiesta Riconnessione...\n");     //INSERIRE ENUM CON CODICE DISPOSITIVO COME HTTP 200 AD ESEMPIO
          }else{
             printf("Dispositivo %s: Non Esistente\n", v);  
+            //return "inesistente";
             return NULL;
          }
          //statusDevice(symDev);
@@ -884,7 +1265,9 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
          break;
 
    case B_status:
-         v=strdup(eval(f->l));
+         x=eval(f->l);
+         v= x ? strdup(x):strdup("0");
+          // v=strdup(eval(f->l));
          v=symhashDev(v);
          printf("Richiesta status in corso per il device %s...\n", v);
          symDev= search(v, "searchSym");
@@ -893,43 +1276,55 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
             printf("Dispositivo %s:  Esistente-> %s\n", v, symDev-> name);
          }else{
             printf("Dispositivo %s:  Non Esistente\n", v);  
+            //return "inesistente";
             return NULL;
          }
          //statusDevice(symDev);
          return (struct ast *) symDev;
          break;
          
-     case B_switchOn:
-         v=strdup(eval(f->l));
+    case B_switchOn:
+         x=eval(f->l);
+         v= x ? strdup(x):strdup("0");
+         //v=strdup(eval(f->l));
          symDev=switchOn(v);
          //Controllo se tutto è andato bene, altrimenti col valore di return di switchOn facciamo prima
          //symDev= search(v, "searchSym");
          //printf ("Il dispositivo è stato aggiornato con stato: %i.",((struct device *) (symDev->dev))->status); 
+          if (! symDev){ return NULL;} //return "inesistente"; }
          return (struct ast *) symDev;
          
-     case B_switchOff:
-         v=strdup(eval(f->l));
+    case B_switchOff:
+         x=eval(f->l);
+         v= x ? strdup(x):strdup("0");
+         //v=strdup(eval(f->l));
          symDev= switchOff(v);
          //symDev= search(v, "searchSym");
          //int status=((struct device *) (symDev->dev))->status;
          //printf ("Il dispositivo è stato aggiornato con stato: %i.\n",status); 
+         if (! symDev){  return NULL;}//return "inesistente"; }
          return (struct ast *) symDev;
           
-      case B_interval:
-         v=strdup(eval(f->l));
+    case B_interval:
+         x=eval(f->l);
+         v= x ? strdup(x):strdup("0");
+        // v=strdup(eval(f->l));
          r=atoi(strdup(eval(f->r)));
          printf("numero:%g, stringa:%s\n", r, v);
          symDev= interval(r, v);
+         if (! symDev){  return NULL;}//return "inesistente"; }
          return (struct ast *) symDev;
          //break;
           
-      case B_archive:
-          v=strdup(eval(f->l));
+    case B_archive:
+         x=eval(f->l);
+         v= x ? strdup(x):strdup("0");
+         // v=strdup(eval(f->l));
           archivia(v);
           return NULL; //void è la funzione
           break;
           
-      case  B_readFile:
+    case  B_readFile:
             v=strdup(eval(f->l));
           
             let=fopen(v, "r"); //esistenza file
@@ -949,14 +1344,36 @@ struct ast * callbuiltin(struct funcBuiltIn *f)
             }
                  
             break;
-
+    
+    case B_add:       
+          add_array(f);
+          return (struct ast *) "inesistente";
+          break;
+    
+    case B_get:
+          if ((f->l)==NULL){
+            get_array (f);
+            return (struct ast *) "inesistente";
+          }else{
+            return (struct ast *) ( get_index (f) ) ;
+          }
+          break;
+    
+    case B_set:
+          set_array (f);
+          return (struct ast *) "settato";
+          break;
+      case B_remove:
+          remove_array (f);
+          return (struct ast *) "settato";
+          break;
 
    default:
          yyerror("Funzione built-in sconosciuta %d\n", functype);
-         return 0;
+         return (struct ast *) 0;
  }
+  return NULL;
 }
-
 
 
 /*FUNZIONI EMBEDDED*/
@@ -977,6 +1394,29 @@ struct ast * callbuiltinSystem(struct funcBuiltInSystem *f)
      yyerror("Funzione di sistema built-in sconosciuta %d\n", functype);
  }
 }
+
+
+/*struct ast * callbuiltArray (struct funcBuiltArray *f){
+    
+    enum builtFuncArray functype = f->functype;
+    
+    switch(functype) {
+       case B_add:
+         //array_add("add");
+            printf("dentro add");
+         return 0;
+         break;
+
+       default:
+         yyerror("Funzione di sistema built-in sconosciuta %d\n", functype);
+    }
+    
+    
+    
+}*/
+
+
+
 
 
 
