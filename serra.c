@@ -967,11 +967,13 @@ struct ast * callbuiltinSystem(struct funcBuiltInSystem *f)
  switch(functype) {
    case B_clear:
      system("clear");
-     return 0;
+     // return 0; // sostituire con NULL ?
+     return NULL;
      break;
    case B_help:
      helpMessage();
-     return 0;
+     // return 0; // sostituire con NULL ?
+     return NULL;
      break;
    default:
      yyerror("Funzione di sistema built-in sconosciuta %d\n", functype);
