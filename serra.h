@@ -7,6 +7,7 @@
 
 extern int yylex();
 extern void yyrestart (FILE *input_file  );
+extern void yyterminate();
 int flag;
 
 /* Tabella dei Simboli */

@@ -1559,19 +1559,20 @@ static char * calluser(struct userfunc *f)
  eval(fn->func);
     
  //valore di ritorno:
+ struct symbol *p;
  v= (struct symref *)(fn->ret) ? (((struct symref *)(fn->ret))->s)->name : NULL;
  if (v){
      v= eval (fn->ret);
-     struct symbol *p=search ((((struct symref *)(fn->ret))->s)->name , NULL); 
+     p=search ((((struct symref *)(fn->ret))->s)->name , NULL); 
      p->value=v;   
  }
     
  sl = fn->syms;
  for(i = 0; i < nargs; i++) {
     struct symbol *s = sl->sym;
-
-    sprintf(s->value, "%s", oldval[i]);
     sl = sl->next;
+    if(v!=NULL && s==p) continue;
+    sprintf(s->value, "%s", oldval[i]);
  }
 
  free (oldval);
@@ -1674,7 +1675,7 @@ void run (struct ast *r){
 }
 
 
-void db(){
+/*void db(){
     
     FILE *db=fopen ("db", "r");
     
@@ -1684,6 +1685,25 @@ void db(){
     }
     flag=1;
 }
+*/
+void db(){
+    
+    FILE *db=fopen ("db", "r");
+    
+    if (db != NULL){
+        yyin=db;
+        yyparse(yyin);
+    }
+}
+void lib(){
+    
+    FILE *lb=fopen ("library", "r");
+    
+    if (lb != NULL){
+        yyin=lb;
+    }
+
+}
 
 
 //Avvio del parser e lexer:
@@ -1692,8 +1712,11 @@ int main()
     welcomeMessage();
     printf(">");
     search("ans", NULL);
-
+    
+    flag=1;
     db();
+    flag=0;
+    lib();
     
     return yyparse();
 

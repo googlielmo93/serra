@@ -31,16 +31,7 @@
 "sleep"                 { yylval.func = B_sleep; return FUNC;          }
 "print"                 { yylval.func = B_print; return FUNC;           }
 "readFile"              { yylval.func = B_readFile; return FUNC;         }
-<<EOF>>                 {                       
-                            if (flag==0){
-                                yyin=stdin; 
-                                yyrestart(yyin);
-                            }else{  
-                                yyin=fopen("library", "r"); 
-                                yyrestart(yyin);
-                                flag=0;
-                            }
-                }
+<<EOF>>                 {  if(flag==0) yyrestart (stdin); else yyterminate ();    }
                         
 "bye"                   { return TERM;                                  }
 

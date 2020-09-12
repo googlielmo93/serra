@@ -34,7 +34,6 @@
 %token <func> SET
 %token <func> REMOVE
 %token <func> SLEEP
-%token REPEAT
 
 %token <func> ARRAY
 %token <d> INTEGER
@@ -44,7 +43,7 @@
 
 %token EOL
 %token <str> TERM
-%token IF THEN ELSE WHILE DO CMD HELP RET
+%token IF THEN ELSE WHILE DO CMD HELP RET REPEAT
 
 %type <a> exp stmt listStmt explistStmt
 %type <a> liste
